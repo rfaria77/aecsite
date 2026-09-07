@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Métricas | A&C SST</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased p-6 md:p-12">
+
+  <div class="max-w-4xl mx-auto space-y-6">
+    
+    <!-- Topo -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200 gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-bold text-[#0077D4] uppercase tracking-wider mb-1">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Gestão de Conteúdo
+        </div>
+        <h1 class="text-2xl font-black text-[#0A2540]">Indicadores e Métricas de Impacto</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/admin" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Voltar ao Menu
+        </a>
+        <a href="/" target="_blank" class="px-4 py-2 bg-[#0077D4] hover:bg-[#0066B8] text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Ver Site
+        </a>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="p-4 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            {{ msg }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulário das 3 Métricas -->
+    <form action="/admin/metricas" method="POST" class="space-y-6">
+      
+      <!-- Indicador 1 -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <span class="w-6 h-6 rounded-md bg-blue-50 text-[#0077D4] font-bold text-xs flex items-center justify-center">1</span>
+          <h3 class="text-sm font-black text-[#0A2540] uppercase tracking-wider">Primeiro Indicador</h3>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Número / Destaque</label>
+            <input type="text" name="stats_clientes_num" value="{{ txt.stats_clientes_num }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm font-bold text-[#0A2540] focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Título</label>
+            <input type="text" name="stats_clientes_titulo" value="{{ txt.stats_clientes_titulo }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Descrição</label>
+            <input type="text" name="stats_clientes_desc" value="{{ txt.stats_clientes_desc }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicador 2 -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <span class="w-6 h-6 rounded-md bg-sky-50 text-[#0077D4] font-bold text-xs flex items-center justify-center">2</span>
+          <h3 class="text-sm font-black text-[#0A2540] uppercase tracking-wider">Segundo Indicador (Destaque Central)</h3>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Número / Destaque</label>
+            <input type="text" name="stats_consultorias_num" value="{{ txt.stats_consultorias_num }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm font-bold text-[#0077D4] focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Título</label>
+            <input type="text" name="stats_consultorias_titulo" value="{{ txt.stats_consultorias_titulo }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Descrição</label>
+            <input type="text" name="stats_consultorias_desc" value="{{ txt.stats_consultorias_desc }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicador 3 -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <span class="w-6 h-6 rounded-md bg-blue-50 text-[#0077D4] font-bold text-xs flex items-center justify-center">3</span>
+          <h3 class="text-sm font-black text-[#0A2540] uppercase tracking-wider">Terceiro Indicador</h3>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Número / Destaque</label>
+            <input type="text" name="stats_horas_num" value="{{ txt.stats_horas_num }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm font-bold text-[#0A2540] focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Título</label>
+            <input type="text" name="stats_horas_titulo" value="{{ txt.stats_horas_titulo }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Descrição</label>
+            <input type="text" name="stats_horas_desc" value="{{ txt.stats_horas_desc }}" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-[#0077D4] focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="w-full py-3.5 bg-[#0077D4] hover:bg-[#0066B8] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+        <i data-lucide="save" class="w-4 h-4"></i> Salvar Alterações nos Indicadores
+      </button>
+
+    </form>
+
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

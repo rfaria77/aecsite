@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title | default("A&C Governança em Saúde e Segurança do Trabalho") }}</title>
+  <meta name="description" content="A&C Governança em SST: Medicina ocupacional, exames clínicos, ASO, laudos técnicos (PGR/PCMSO/LTCAT), treinamentos normativos e conformidade total com o eSocial.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#0A2540',
+              royal: '#0077D4',
+              sky: '#38BDF8',
+              ice: '#F0F9FF',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-sky selection:text-white">
+
+  <!-- ================= NAVBAR LEVE & MINIMALISTA ================= -->
+  <header class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/60 transition-all">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      
+      <!-- LOGO OFICIAL A&C (DINÂMICA) -->
+      <a href="#inicio" class="flex items-center group">
+        <img 
+          src="{{ img.logo | default('/static/img/logo.png') }}" 
+          alt="A&C Saúde e Segurança do Trabalho" 
+          class="h-10 md:h-11 w-auto object-contain hover:opacity-90 transition-opacity"
+        >
+      </a>
+
+      <!-- LINKS NAVEGAÇÃO -->
+      <nav class="hidden lg:flex items-center gap-6 text-[13px] font-semibold text-slate-600">
+        <a href="#inicio" class="hover:text-brand-royal transition-colors">Início</a>
+        <a href="#publico" class="hover:text-brand-royal transition-colors">Soluções Corporativas</a>
+        <a href="#exames" class="hover:text-brand-royal transition-colors">Exames &amp; ASO</a>
+        <a href="#servicos" class="hover:text-brand-royal transition-colors">Laudos &amp; NRs</a>
+        <a href="#metodo" class="hover:text-brand-royal transition-colors">Nosso Método</a>
+        <a href="#estrutura" class="hover:text-brand-royal transition-colors">Estrutura</a>
+        <a href="#sobre" class="hover:text-brand-royal transition-colors">Sobre</a>
+      </nav>
+
+      <!-- ACESSOS E AÇÃO -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Dropdown Portais -->
+        <div class="relative group">
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-brand-royal bg-slate-100/80 hover:bg-slate-100 rounded-lg transition-all border border-slate-200/60">
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-brand-royal"></i>
+            <span>Portais</span>
+            <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400 group-hover:rotate-180 transition-transform"></i>
+          </button>
+          
+          <div class="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-100 p-1.5 hidden group-hover:block transition-all">
+            <a href="{{ portal_treinamento_url | default('#') }}" target="_blank" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-brand-ice hover:text-brand-royal rounded-lg transition-colors">
+              <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-brand-royal"></i>
+              Portal Treinamentos
+            </a>
+            <a href="{{ portal_cliente_url | default('#') }}" target="_blank" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-brand-ice hover:text-brand-royal rounded-lg transition-colors">
+              <i data-lucide="user-check" class="w-3.5 h-3.5 text-brand-royal"></i>
+              Portal do Cliente
+            </a>
+          </div>
+        </div>
+
+        <!-- Botão Orçamento -->
+        <a href="#proposta" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white bg-brand-royal hover:bg-[#0066B8] rounded-lg shadow-sm hover:shadow transition-all">
+          <span>Orçamento</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION (COMPACTA) ================= -->
+  <section id="inicio" class="relative bg-gradient-to-br from-brand-navy via-[#0C2F52] to-[#081B30] text-white py-8 lg:py-10 overflow-hidden">
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-sky/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-brand-royal/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="grid lg:grid-cols-12 gap-8 items-center">
+        
+        <div class="lg:col-span-7 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-royal/20 border border-brand-sky/30 text-brand-sky text-[11px] font-bold">
+            <span class="w-2 h-2 rounded-full bg-brand-sky animate-pulse"></span>
+            Medicina Ocupacional &amp; Engenharia de Segurança
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.15]">
+            Protegendo sua empresa com <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-sky via-sky-200 to-white">excelência técnica e conformidade</span>.
+          </h1>
+
+          <p class="text-slate-200 text-xs sm:text-sm leading-relaxed max-w-xl">
+            Soluções completas para gestão de saúde ocupacional, emissão ágil de ASOs, laudos técnicos normativos (PGR/PCMSO) e envio seguro de eventos ao eSocial.
+          </p>
+
+          <div class="flex flex-wrap gap-3 pt-1">
+            <a href="#proposta" class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-brand-royal hover:bg-[#0066B8] rounded-xl shadow-md shadow-brand-royal/30 transition-all flex items-center gap-2">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              Solicitar Proposta Comercial
+            </a>
+            <a href="#metodo" class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-200 bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl transition-all">
+              Conhecer Nosso Método
+            </a>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-white/10 text-xs text-slate-300 font-semibold">
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-brand-sky"></i>
+              <span>Emissão Ágil de ASO</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-brand-sky"></i>
+              <span>PGR, PCMSO e LTCAT</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-brand-sky"></i>
+              <span>Eventos eSocial</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAINEL DE SST INTEGRADO DINÂMICO 100% -->
+        <div class="lg:col-span-5">
+          <div class="relative mx-auto max-w-md bg-white/95 backdrop-blur-xl text-slate-800 p-5 rounded-2xl shadow-2xl border border-white/40 ring-1 ring-black/5 space-y-4">
+            
+            <!-- Topo do Console -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="ml-1.5 text-[9.5px] font-black uppercase tracking-widest text-brand-navy">Painel de Governança Ativa</span>
+              </div>
+              <span class="inline-flex items-center gap-1.5 text-[9.5px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Live eSocial
+              </span>
+            </div>
+
+            <!-- Cartão Escuro com Indicador Principal 100% -->
+            <div class="p-3.5 rounded-xl bg-gradient-to-br from-[#0A2540] via-[#0E355C] to-[#0A2540] text-white shadow-inner relative overflow-hidden">
+              <div class="absolute -right-8 -bottom-8 w-28 h-28 bg-brand-royal/30 rounded-full blur-2xl pointer-events-none"></div>
+              
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[9.5px] font-extrabold uppercase tracking-widest text-brand-sky">Índice de Conformidade Legal</span>
+                <span class="text-[10px] font-black bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-400/30">Nível A+</span>
+              </div>
+              
+              <div class="flex items-baseline gap-2 mb-1.5">
+                <span class="text-2xl sm:text-3xl font-black tracking-tight">100%</span>
+                <span class="text-[11px] text-slate-300 font-medium">auditoria e NRs vigentes</span>
+              </div>
+
+              <!-- Barra de Progresso 100% -->
+              <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-sky to-emerald-400 rounded-full" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <!-- Métricas Operacionais (100% Total) -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 space-y-1.5">
+                <div class="flex items-center justify-between text-[10px] font-bold text-slate-600">
+                  <span>ASOs Válidos</span>
+                  <span class="text-emerald-600 font-black">100%</span>
+                </div>
+                <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                </div>
+                <p class="text-[9px] text-slate-400">Zero exames vencidos</p>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 space-y-1.5">
+                <div class="flex items-center justify-between text-[10px] font-bold text-slate-600">
+                  <span>Eventos S-2240</span>
+                  <span class="text-brand-royal font-black">100%</span>
+                </div>
+                <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-brand-royal rounded-full" style="width: 100%;"></div>
+                </div>
+                <p class="text-[9px] text-slate-400">Ambientes auditados</p>
+              </div>
+            </div>
+
+            <!-- Feed de Eventos Dinâmico -->
+            <div class="space-y-1.5 pt-0.5">
+              <div class="flex items-center justify-between text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">
+                <span>Auditoria &amp; Treinamento Recente</span>
+                <span class="text-emerald-600 font-semibold lowercase">atualizado agora</span>
+              </div>
+              
+              <!-- Registro 1: Protocolo eSocial -->
+              <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50/70 border border-slate-100 text-xs">
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <i data-lucide="check-check" class="w-3 h-3"></i>
+                  </div>
+                  <div>
+                    <div class="font-bold text-slate-700 text-[10.5px]">Envio S-2220 / S-2240</div>
+                    <div id="protocolo-esocial" class="text-[9px] text-slate-400">Protocolo gov.br emitido com sucesso</div>
+                  </div>
+                </div>
+                <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/50">Homologado</span>
+              </div>
+
+              <!-- Registro 2: Turma Rotativa de Treinamento -->
+              <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50/70 border border-slate-100 text-xs">
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-sky-100 text-brand-royal flex items-center justify-center shrink-0">
+                    <i data-lucide="graduation-cap" class="w-3 h-3 text-brand-royal"></i>
+                  </div>
+                  <div>
+                    <div id="turma-titulo" class="font-bold text-slate-700 text-[10.5px]">Capacitação NR-35</div>
+                    <div id="turma-sub" class="text-[9px] text-slate-400">Turma concluída com certificação</div>
+                  </div>
+                </div>
+                <span id="turma-tag" class="text-[9px] font-bold text-brand-royal bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200/50">Certificado</span>
+              </div>
+            </div>
+
+            <!-- Botão de Ação -->
+            <a href="#proposta" class="w-full py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-brand-royal hover:bg-[#0066B8] rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-brand-royal/20">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>Garantir Essa Conformidade na Minha Empresa</span>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BARRA DE INDICADORES (MÉTRICAS DINÂMICAS) ================= -->
+  <section id="indicadores" class="py-12 bg-white border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-slate-100">
+        <div>
+          <div class="text-4xl font-black text-brand-navy tracking-tight">{{ txt.stats_clientes_num }}</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-800 mt-1">{{ txt.stats_clientes_titulo }}</div>
+          <p class="text-xs text-slate-500 mt-1">{{ txt.stats_clientes_desc }}</p>
+        </div>
+
+        <div class="pt-6 md:pt-0">
+          <div class="text-4xl font-black text-brand-royal tracking-tight">{{ txt.stats_consultorias_num }}</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-800 mt-1">{{ txt.stats_consultorias_titulo }}</div>
+          <p class="text-xs text-slate-500 mt-1">{{ txt.stats_consultorias_desc }}</p>
+        </div>
+
+        <div class="pt-6 md:pt-0">
+          <div class="text-4xl font-black text-brand-navy tracking-tight">{{ txt.stats_horas_num }}</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-800 mt-1">{{ txt.stats_horas_titulo }}</div>
+          <p class="text-xs text-slate-500 mt-1">{{ txt.stats_horas_desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SEÇÃO: PARA QUEM É A A&C (ALINHADO LADO A LADO) ================= -->
+  <section id="publico" class="py-16 bg-slate-50 border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12 space-y-2.5">
+        <span class="text-xs font-extrabold tracking-widest text-brand-royal uppercase">Soluções Especializadas</span>
+        <h2 class="text-3xl font-black text-brand-navy tracking-tight">Atendimento Sob Medida para Cada Setor</h2>
+        <p class="text-xs sm:text-sm text-slate-600">Entregamos exatamente o que a sua área precisa para trabalhar com tranquilidade e precisão legal.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        
+        <!-- RH / DP -->
+        <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3.5 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 shadow-sm">
+                <i data-lucide="users-round" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span class="text-[11px] font-extrabold text-brand-royal uppercase tracking-wider block">Para o RH e DP</span>
+                <h3 class="text-lg font-extrabold text-brand-navy leading-snug">Agilidade e Fim da Burocracia</h3>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed mb-5">
+              Emissão ágil de ASOs sem filas, prontuários centralizados em nuvem e envio automático de eventos ao eSocial sem inconsistências.
+            </p>
+          </div>
+
+          <ul class="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Agendamentos sem atrito</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Disparo automático S-2220 / S-2240</li>
+          </ul>
+        </div>
+
+        <!-- DIRETORIA / FINANCEIRO -->
+        <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3.5 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-brand-ice text-brand-navy flex items-center justify-center shrink-0 shadow-sm">
+                <i data-lucide="trending-up" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span class="text-[11px] font-extrabold text-brand-navy uppercase tracking-wider block">Para a Diretoria</span>
+                <h3 class="text-lg font-extrabold text-brand-navy leading-snug">Segurança Jurídica &amp; Compliance</h3>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed mb-5">
+              Proteção patrimonial contra passivos trabalhistas, prevenção de autuações do Ministério do Trabalho e otimização das alíquotas FAP/RAT.
+            </p>
+          </div>
+
+          <ul class="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Redução de passivos judiciais</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Governança ocupacional contínua</li>
+          </ul>
+        </div>
+
+        <!-- SESMT / ENGENHARIA -->
+        <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3.5 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 shadow-sm">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span class="text-[11px] font-extrabold text-brand-royal uppercase tracking-wider block">Para o SESMT</span>
+                <h3 class="text-lg font-extrabold text-brand-navy leading-snug">Rigor Técnico e Pericial</h3>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed mb-5">
+              Laudos com ART/CREA e CRM, inventário detalhado de riscos (PGR/GRO), programas ergonômicos e capacitações normativas de alto padrão.
+            </p>
+          </div>
+
+          <ul class="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Pareceres periciais robustos</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Treinamentos com certificação ágil</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EXAMES CLÍNICOS + DESTAQUE IN COMPANY ================= -->
+  <section id="exames" class="py-12 bg-white border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 space-y-6">
+      
+      <!-- Cabeçalho Compacto -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-extrabold tracking-widest text-brand-royal uppercase">Medicina Ocupacional Ágil &bull; NR-07</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight mt-0.5">Exames Clínicos Ocupacionais &amp; ASO</h2>
+        </div>
+        <p class="text-xs text-slate-500 max-w-md leading-relaxed">
+          Atendimento centralizado com exames complementares no mesmo local e emissão imediata do ASO sem filas.
+        </p>
+      </div>
+
+      <!-- Grid Compacto com 5 Colunas -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+        
+        <!-- 1. Admissional -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 group-hover:bg-brand-royal group-hover:text-white transition-colors">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">NR-07</span>
+              <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">Admissional</h3>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-200/50">
+            <p class="text-[11px] text-slate-500 leading-snug">Aptidão médica prévia ao início das atividades operacionais.</p>
+            <span class="inline-block mt-2 text-[9.5px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/50">Contratação</span>
+          </div>
+        </div>
+
+        <!-- 2. Periódico -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 group-hover:bg-brand-royal group-hover:text-white transition-colors">
+              <i data-lucide="calendar-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">NR-07</span>
+              <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">Periódico</h3>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-200/50">
+            <p class="text-[11px] text-slate-500 leading-snug">Monitoramento regular da saúde física de cada colaborador.</p>
+            <span class="inline-block mt-2 text-[9.5px] font-bold text-brand-royal bg-sky-50 px-2 py-0.5 rounded border border-sky-200/50">Rotina Anual</span>
+          </div>
+        </div>
+
+        <!-- 3. Demissional -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 group-hover:bg-brand-royal group-hover:text-white transition-colors">
+              <i data-lucide="user-minus" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">NR-07</span>
+              <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">Demissional</h3>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-200/50">
+            <p class="text-[11px] text-slate-500 leading-snug">Homologação da integridade física e clínica no desligamento.</p>
+            <span class="inline-block mt-2 text-[9.5px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/70">Rescisão</span>
+          </div>
+        </div>
+
+        <!-- 4. Retorno ao Trabalho -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 group-hover:bg-brand-royal group-hover:text-white transition-colors">
+              <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">NR-07</span>
+              <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">Retorno</h3>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-200/50">
+            <p class="text-[11px] text-slate-500 leading-snug">Avaliação obrigatória para afastamentos superiores a 30 dias.</p>
+            <span class="inline-block mt-2 text-[9.5px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60">&gt; 30 Dias</span>
+          </div>
+        </div>
+
+        <!-- 5. Mudança de Risco -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center shrink-0 group-hover:bg-brand-royal group-hover:text-white transition-colors">
+              <i data-lucide="shuffle" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">NR-07</span>
+              <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">Mudança Risco</h3>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-200/50">
+            <p class="text-[11px] text-slate-500 leading-snug">Reavaliação antes da transferência para novo setor ou atividade.</p>
+            <span class="inline-block mt-2 text-[9.5px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200/60">Nova Função</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BANNER DE DESTAQUE: EXAMES IN COMPANY -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0A2540] via-[#0E355C] to-[#0A2540] text-white p-5 sm:p-6 shadow-md border border-white/10 flex flex-col lg:flex-row items-center justify-between gap-5">
+        <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-brand-sky/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex items-start sm:items-center gap-4 relative z-10">
+          <div class="w-12 h-12 rounded-2xl bg-brand-royal/40 border border-brand-sky/30 text-brand-sky flex items-center justify-center shrink-0 shadow-inner">
+            <i data-lucide="truck" class="w-6 h-6"></i>
+          </div>
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[10px] font-black uppercase tracking-widest text-brand-sky bg-brand-sky/15 px-2 py-0.5 rounded border border-brand-sky/30">
+                Atendimento In Company
+              </span>
+              <span class="text-[11px] font-medium text-emerald-400 flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Zero deslocamento de equipe
+              </span>
+            </div>
+            <h3 class="text-base sm:text-lg font-black tracking-tight text-white">
+              Levamos nossa equipe médica e exames complementares até a sua empresa!
+            </h3>
+            <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+              Realizamos consultas ocupacionais, coletas laboratoriais, audiometria e eletros diretamente nas suas instalações para campanhas de periódicos sem interromper sua operação.
+            </p>
+          </div>
+        </div>
+
+        <div class="relative z-10 shrink-0 w-full lg:w-auto">
+          <a href="#proposta" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-sky hover:bg-sky-300 text-brand-navy text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-brand-sky/20 hover:scale-[1.02]">
+            <i data-lucide="building-2" class="w-4 h-4"></i>
+            <span>Agendar In Company</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SERVIÇOS TÉCNICOS (COMPACTO & OTIMIZADO) ================= -->
+  <section id="servicos" class="py-12 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 space-y-6">
+      
+      <!-- Cabeçalho em Linha Única -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+        <div>
+          <span class="text-xs font-extrabold tracking-widest text-brand-royal uppercase">Segurança e Engenharia Ocupacional</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight mt-0.5">Laudos, Programas &amp; Treinamentos Técnicos</h2>
+        </div>
+        <p class="text-xs text-slate-500 max-w-md leading-relaxed">
+          Elaboração com ART/CREA e CRM, respaldo pericial robusto e integração aos eventos do eSocial.
+        </p>
+      </div>
+
+      <!-- Grid com Cards Panorâmicos -->
+      <div class="grid md:grid-cols-3 gap-5">
+        
+        <!-- CARD 1: PGR / GRO -->
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/70 shadow-sm hover:shadow-lg hover:border-brand-royal/40 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="relative h-36 overflow-hidden">
+              <img src="{{ img.servico_pgr | default('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80') }}" alt="PGR e GRO" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-brand-navy text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                <i data-lucide="shield-alert" class="w-3 h-3 text-brand-royal"></i> NR-01 &bull; GRO
+              </span>
+            </div>
+            <div class="p-4 sm:p-5 space-y-2">
+              <h3 class="text-base font-black text-brand-navy group-hover:text-brand-royal transition-colors">
+                PGR / GRO &amp; Laudos Técnicos
+              </h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Inventário analítico de riscos, planos de ação preventiva, LTCAT e laudos de insalubridade/periculosidade.
+              </p>
+            </div>
+          </div>
+          <div class="px-4 sm:px-5 pb-4 pt-1 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] font-bold text-slate-400">ART Inclusa</span>
+            <a href="#proposta" class="inline-flex items-center gap-1 text-xs font-bold text-brand-royal group-hover:text-[#005CA8]">
+              Solicitar Documento <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 2: PCMSO -->
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/70 shadow-sm hover:shadow-lg hover:border-brand-royal/40 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="relative h-36 overflow-hidden">
+              <img src="{{ img.servico_pcmso | default('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80') }}" alt="PCMSO" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-brand-navy text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                <i data-lucide="heart-pulse" class="w-3 h-3 text-rose-500"></i> NR-07 &bull; Saúde
+              </span>
+            </div>
+            <div class="p-4 sm:p-5 space-y-2">
+              <h3 class="text-base font-black text-brand-navy group-hover:text-brand-royal transition-colors">
+                PCMSO &amp; Coordenação Médica
+              </h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Gestão médica contínua sob a NR-07, cronograma anual de exames, rastreamento epidemiológico e ASOs.
+              </p>
+            </div>
+          </div>
+          <div class="px-4 sm:px-5 pb-4 pt-1 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] font-bold text-slate-400">Médico Coordenador</span>
+            <a href="#proposta" class="inline-flex items-center gap-1 text-xs font-bold text-brand-royal group-hover:text-[#005CA8]">
+              Conhecer Gestão <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 3: TREINAMENTOS -->
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/70 shadow-sm hover:shadow-lg hover:border-brand-royal/40 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="relative h-36 overflow-hidden">
+              <img src="{{ img.servico_treinamentos | default('https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80') }}" alt="Treinamentos de Segurança" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-brand-navy text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                <i data-lucide="award" class="w-3 h-3 text-brand-royal"></i> Formação Legal
+              </span>
+            </div>
+            <div class="p-4 sm:p-5 space-y-2">
+              <h3 class="text-base font-black text-brand-navy group-hover:text-brand-royal transition-colors">
+                Treinamentos Normativos (NRs)
+              </h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Capacitações presenciais e híbridas (CIPA, Trabalho em Altura, Espaço Confinado e Brigada) com certificação ágil.
+              </p>
+            </div>
+          </div>
+          <div class="px-4 sm:px-5 pb-4 pt-1 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] font-bold text-slate-400">Presencial / Híbrido</span>
+            <a href="#proposta" class="inline-flex items-center gap-1 text-xs font-bold text-brand-royal group-hover:text-[#005CA8]">
+              Ver Treinamentos <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SEÇÃO: O MÉTODO A&C (ESTEIRA COMPACTA & FLUIDA) ================= -->
+  <section id="metodo" class="py-12 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 space-y-8">
+      
+      <!-- Cabeçalho em Linha Única -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+        <div>
+          <span class="text-xs font-extrabold tracking-widest text-brand-royal uppercase">Fluxo de Governança Contínua</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight mt-0.5">Como Blindamos Sua Empresa Passo a Passo</h2>
+        </div>
+        <p class="text-xs text-slate-500 max-w-md leading-relaxed">
+          Metodologia estruturada para transformar exigências trabalhistas em tranquilidade operacional e jurídica.
+        </p>
+      </div>
+
+      <!-- Grid com Linha Conectora / Esteira -->
+      <div class="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="hidden lg:block absolute top-7 left-12 right-12 h-0.5 bg-slate-100 -z-0"></div>
+
+        <!-- ETAPA 01 -->
+        <div class="relative z-10 p-5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm text-brand-royal font-black text-xs flex items-center justify-center group-hover:bg-brand-royal group-hover:text-white group-hover:border-brand-royal transition-colors">
+                <i data-lucide="search" class="w-4 h-4"></i>
+              </div>
+              <span class="text-xs font-black text-slate-300 group-hover:text-brand-royal transition-colors">ETAPA 01</span>
+            </div>
+            <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">
+              Mapeamento de Riscos
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed mt-1">
+              Inspeção dos postos de trabalho, levantamento ambiental de agentes físicos, químicos e ergonômicos.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-slate-200/50">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-brand-navy bg-white px-2 py-0.5 rounded border border-slate-200/60 shadow-xs">
+              <i data-lucide="check" class="w-3 h-3 text-brand-royal"></i> Diagnóstico Inicial
+            </span>
+          </div>
+        </div>
+
+        <!-- ETAPA 02 -->
+        <div class="relative z-10 p-5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm text-brand-royal font-black text-xs flex items-center justify-center group-hover:bg-brand-royal group-hover:text-white group-hover:border-brand-royal transition-colors">
+                <i data-lucide="file-signature" class="w-4 h-4"></i>
+              </div>
+              <span class="text-xs font-black text-slate-300 group-hover:text-brand-royal transition-colors">ETAPA 02</span>
+            </div>
+            <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">
+              Elaboração dos Laudos
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed mt-1">
+              Emissão técnica do PGR, PCMSO, LTCAT e cronogramas preventivos com anotações de ART e CRM.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-slate-200/50">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-brand-navy bg-white px-2 py-0.5 rounded border border-slate-200/60 shadow-xs">
+              <i data-lucide="check" class="w-3 h-3 text-brand-royal"></i> ART/CRM Inclusos
+            </span>
+          </div>
+        </div>
+
+        <!-- ETAPA 03 -->
+        <div class="relative z-10 p-5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm text-brand-royal font-black text-xs flex items-center justify-center group-hover:bg-brand-royal group-hover:text-white group-hover:border-brand-royal transition-colors">
+                <i data-lucide="stethoscope" class="w-4 h-4"></i>
+              </div>
+              <span class="text-xs font-black text-slate-300 group-hover:text-brand-royal transition-colors">ETAPA 03</span>
+            </div>
+            <h3 class="text-sm font-black text-brand-navy group-hover:text-brand-royal transition-colors">
+              Atendimento Clínico
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed mt-1">
+              Exames admissionais, periódicos e complementares centralizados na clínica ou via In Company.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-slate-200/50">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-brand-navy bg-white px-2 py-0.5 rounded border border-slate-200/60 shadow-xs">
+              <i data-lucide="check" class="w-3 h-3 text-brand-royal"></i> ASO Imediato
+            </span>
+          </div>
+        </div>
+
+        <!-- ETAPA 04 -->
+        <div class="relative z-10 p-5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 hover:bg-white hover:shadow-md transition-all duration-200 group flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm text-emerald-600 font-black text-xs flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 transition-colors">
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </div>
+              <span class="text-xs font-black text-emerald-400 group-hover:text-emerald-600 transition-colors">ETAPA 04</span>
+            </div>
+            <h3 class="text-sm font-black text-brand-navy group-hover:text-emerald-700 transition-colors">
+              Gestão eSocial &amp; NRs
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed mt-1">
+              Disparo dos eventos S-2210, S-2220 e S-2240 com protocolos oficiais e histórico digital seguro.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-slate-200/50">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 shadow-xs">
+              <i data-lucide="check-check" class="w-3 h-3 text-emerald-600"></i> Protocolo Gov.br
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= MÓDULO SIMULADOR ESOCIAL (COM DESTAQUE EM DIAGNÓSTICO RÁPIDO) ================= -->
+  <section id="simulador" class="py-10 lg:py-12 bg-gradient-to-r from-brand-navy via-[#0C2F52] to-brand-navy text-white relative overflow-hidden">
+    <div class="absolute -right-16 -top-16 w-80 h-80 bg-brand-sky/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="grid lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Lado Esquerdo -->
+        <div class="lg:col-span-6 space-y-3.5">
+          
+          <!-- PÍLULA DE ALTO DESTAQUE: DIAGNÓSTICO RÁPIDO DE SST -->
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-brand-sky/20 border border-brand-sky/50 text-white shadow-lg shadow-brand-sky/10 backdrop-blur-md">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-sky opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-sky"></span>
+            </span>
+            <span class="text-xs sm:text-[13px] font-black tracking-wide uppercase text-brand-sky">
+              Diagnóstico Rápido de SST
+            </span>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+            Sua empresa está vulnerável a multas do <span class="text-brand-sky">eSocial</span>?
+          </h2>
+
+          <p class="text-slate-200 text-xs sm:text-sm leading-relaxed max-w-xl">
+            A fiscalização da Receita Federal e do Ministério do Trabalho é 100% digital. O atraso ou inconsistência nos eventos gera autuações imediatas na DCTFWeb.
+          </p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2 text-[11px] text-slate-300 font-semibold">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-brand-sky shrink-0"></i>
+              <span>Cruzamento DCTFWeb</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-brand-sky shrink-0"></i>
+              <span>Proteção FAP/RAT</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-brand-sky shrink-0"></i>
+              <span>Sem Custo Inicial</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lado Direito: Console de Diagnóstico Interativo -->
+        <div class="lg:col-span-6">
+          <div class="bg-white/10 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-white/15 space-y-3.5 shadow-2xl">
+            
+            <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-300">Audite seu cenário atual:</span>
+              <span id="diagnostico-status" class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                Pendente de Avaliação
+              </span>
+            </div>
+
+            <!-- Checkboxes Interativos -->
+            <div class="space-y-2 text-xs">
+              
+              <!-- Item 1: S-2240 -->
+              <label class="flex items-center justify-between p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 cursor-pointer transition-colors group">
+                <div class="flex items-center gap-2.5">
+                  <input type="checkbox" class="chk-simulador w-4 h-4 rounded text-brand-royal focus:ring-0 cursor-pointer">
+                  <div>
+                    <span class="font-bold text-white block text-[11.5px]">Evento S-2240 (Condições Ambientais / Riscos)</span>
+                    <span class="text-[10px] text-slate-300">LTCAT emitido e enviado ao ambiente nacional</span>
+                  </div>
+                </div>
+                <span class="text-[9.5px] font-mono text-brand-sky font-bold">S-2240</span>
+              </label>
+
+              <!-- Item 2: S-2220 / PCMSO -->
+              <label class="flex items-center justify-between p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 cursor-pointer transition-colors group">
+                <div class="flex items-center gap-2.5">
+                  <input type="checkbox" class="chk-simulador w-4 h-4 rounded text-brand-royal focus:ring-0 cursor-pointer">
+                  <div>
+                    <span class="font-bold text-white block text-[11.5px]">Evento S-2220 (Monitoramento da Saúde / ASO)</span>
+                    <span class="text-[10px] text-slate-300">Todos os ASOs e exames enviados no prazo regulamentar</span>
+                  </div>
+                </div>
+                <span class="text-[9.5px] font-mono text-brand-sky font-bold">S-2220</span>
+              </label>
+
+              <!-- Item 3: PGR / NRs -->
+              <label class="flex items-center justify-between p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 cursor-pointer transition-colors group">
+                <div class="flex items-center gap-2.5">
+                  <input type="checkbox" class="chk-simulador w-4 h-4 rounded text-brand-royal focus:ring-0 cursor-pointer">
+                  <div>
+                    <span class="font-bold text-white block text-[11.5px]">PGR &amp; PCMSO Atualizados nos últimos 12 meses</span>
+                    <span class="text-[10px] text-slate-300">Inventário de riscos e coordenação médica vigentes</span>
+                  </div>
+                </div>
+                <span class="text-[9.5px] font-mono text-brand-sky font-bold">NR-01/07</span>
+              </label>
+
+            </div>
+
+            <!-- Botão de Ação -->
+            <a href="#proposta" class="w-full py-2.5 text-xs font-black uppercase tracking-wider text-brand-navy bg-brand-sky hover:bg-sky-300 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-brand-sky/20">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Validar e Regularizar com Nossos Especialistas</span>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ESTRUTURA FÍSICA (IMAGENS DINÂMICAS) ================= -->
+  <section id="estrutura" class="py-14 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+        <div>
+          <span class="text-xs font-extrabold tracking-widest text-brand-royal uppercase">Infraestrutura Completa</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight mt-0.5">Conheça Nossa Estrutura &amp; Instalações</h2>
+        </div>
+        <p class="text-xs text-slate-500 max-w-md leading-relaxed">
+          Ambientes modernos, confortáveis e equipados para a realização de exames clínicos e complementares com rapidez.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- RECEPÇÃO -->
+        <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200/70 bg-slate-100 h-64">
+          <img src="{{ img.estrutura_recepcao | default('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80') }}" alt="Recepção" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent flex flex-col justify-end p-4 text-white">
+            <span class="text-[9.5px] font-bold tracking-wider text-brand-sky uppercase">Acolhimento</span>
+            <h3 class="text-sm font-extrabold">Recepção &amp; Triagem</h3>
+            <p class="text-[11px] text-slate-200 mt-0.5">Ambiente climatizado e atendimento ágil.</p>
+          </div>
+        </div>
+
+        <!-- CONSULTÓRIO -->
+        <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200/70 bg-slate-100 h-64">
+          <img src="{{ img.estrutura_consultorio | default('https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=600&q=80') }}" alt="Consultórios" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent flex flex-col justify-end p-4 text-white">
+            <span class="text-[9.5px] font-bold tracking-wider text-brand-sky uppercase">Medicina</span>
+            <h3 class="text-sm font-extrabold">Consultórios Médicos</h3>
+            <p class="text-[11px] text-slate-200 mt-0.5">Estrutura para exames ocupacionais.</p>
+          </div>
+        </div>
+
+        <!-- EXAMES -->
+        <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200/70 bg-slate-100 h-64">
+          <img src="{{ img.estrutura_exames | default('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80') }}" alt="Exames Complementares" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent flex flex-col justify-end p-4 text-white">
+            <span class="text-[9.5px] font-bold tracking-wider text-brand-sky uppercase">Diagnóstico</span>
+            <h3 class="text-sm font-extrabold">Exames Complementares</h3>
+            <p class="text-[11px] text-slate-200 mt-0.5">Audiometria, espirometria, ECG e EEG.</p>
+          </div>
+        </div>
+
+        <!-- TREINAMENTO -->
+        <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200/70 bg-slate-100 h-64">
+          <img src="{{ img.estrutura_treinamento | default('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80') }}" alt="Treinamento" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent flex flex-col justify-end p-4 text-white">
+            <span class="text-[9.5px] font-bold tracking-wider text-brand-sky uppercase">Capacitação</span>
+            <h3 class="text-sm font-extrabold">Sala de Treinamentos</h3>
+            <p class="text-[11px] text-slate-200 mt-0.5">Espaço preparado para formação das NRs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- ================= FORMULÁRIO DE PROPOSTA REFINADO ================= -->
+  <section id="proposta" class="py-14 bg-gradient-to-br from-brand-navy via-[#0C2F52] to-[#081B30] text-white relative overflow-hidden">
+    <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-brand-sky/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="grid lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Coluna Esquerda: Autoridade e SLA -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-sky/15 border border-brand-sky/30 text-brand-sky text-[11px] font-extrabold uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Proposta Comercial Sob Medida
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+            Pronto para blindar sua empresa contra riscos e multas?
+          </h2>
+
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Receba um diagnóstico dos programas obrigatórios (PGR/PCMSO) e uma proposta com custos dimensionados exatamente para o tamanho da sua equipe.
+          </p>
+
+          <!-- Diferenciais Comerciais -->
+          <div class="space-y-2 pt-1 text-xs text-slate-200">
+            <div class="flex items-center gap-2.5">
+              <div class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-brand-sky shrink-0"><i data-lucide="zap" class="w-3.5 h-3.5"></i></div>
+              <span><strong>Retorno Ágil:</strong> Contato comercial no mesmo dia útil</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <div class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-brand-sky shrink-0"><i data-lucide="lock" class="w-3.5 h-3.5"></i></div>
+              <span><strong>Privacidade Total:</strong> Dados protegidos conforme a LGPD</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <div class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-brand-sky shrink-0"><i data-lucide="clock" class="w-3.5 h-3.5"></i></div>
+              <span>Segunda a Sexta: 07h30 às 17h30</span>
+            </div>
+          </div>
+
+          <!-- Botão Alternativo para WhatsApp Direto -->
+          <div class="pt-2">
+            <a href="https://wa.me/{{ whatsapp_num | default('') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30 transition-all">
+              <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
+              <span>Prefere urgência? Chame no WhatsApp</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Card do Formulário Otimizado -->
+        <div class="lg:col-span-7">
+          <div class="bg-white text-slate-800 p-6 sm:p-7 rounded-3xl shadow-2xl border border-slate-100 space-y-4">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 class="text-base font-black text-brand-navy">Solicitação Rápida</h3>
+                <p class="text-[11px] text-slate-500">Leva menos de 1 minuto para preencher</p>
+              </div>
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-brand-royal bg-brand-ice px-2.5 py-1 rounded-md">
+                Sem Compromisso
+              </span>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, msg in messages %}
+                  <div class="p-3 rounded-xl text-xs font-bold {% if category == 'sucesso' %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-amber-50 text-amber-700 border border-amber-200{% endif %}">
+                    {{ msg }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('contato') }}" method="POST" class="space-y-3.5">
+              <div class="grid sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label class="block text-[11px] font-extrabold text-slate-700 uppercase mb-1">Nome / Contato</label>
+                  <div class="relative">
+                    <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                    <input type="text" name="nome" required placeholder="Seu nome completo" class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-royal">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-extrabold text-slate-700 uppercase mb-1">Razão Social / Empresa</label>
+                  <div class="relative">
+                    <i data-lucide="building" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                    <input type="text" name="empresa" required placeholder="Nome da empresa" class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-royal">
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label class="block text-[11px] font-extrabold text-slate-700 uppercase mb-1">WhatsApp / Telefone</label>
+                  <div class="relative">
+                    <i data-lucide="phone" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                    <input type="tel" name="telefone" required placeholder="(00) 00000-0000" class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-royal">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-extrabold text-slate-700 uppercase mb-1">Nº de Colaboradores</label>
+                  <select name="vidas" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-royal text-slate-700">
+                    <option value="1-10">1 a 10 colaboradores</option>
+                    <option value="11-50">11 a 50 colaboradores</option>
+                    <option value="51-200">51 a 200 colaboradores</option>
+                    <option value="200+">Mais de 200 colaboradores</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-extrabold text-slate-700 uppercase mb-1">Serviço de Interesse Principal</label>
+                <select name="servico" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-royal text-slate-700">
+                  <option value="Gestão Completa (ASO + Laudos + eSocial)">Gestão Completa (ASO + Laudos + eSocial)</option>
+                  <option value="Apenas Exames Ocupacionais (ASO / PCMSO)">Apenas Exames Ocupacionais (ASO / PCMSO)</option>
+                  <option value="Atendimento In Company (Exames na Empresa)">Atendimento In Company (Exames na Empresa)</option>
+                  <option value="Elaboração de Programas e Laudos (PGR, LTCAT)">Elaboração de Programas e Laudos (PGR, LTCAT)</option>
+                  <option value="Treinamentos Normativos (NRs)">Treinamentos Normativos (NRs)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="w-full py-3 text-xs font-black uppercase tracking-wider text-white bg-brand-royal hover:bg-[#0066B8] rounded-xl shadow-md shadow-brand-royal/25 transition-all flex items-center justify-center gap-2 group">
+                <span>Receber Proposta Personalizada</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SOBRE NÓS (CORPO TÉCNICO MULTIDISCIPLINAR REFINADO) ================= -->
+  <section id="sobre" class="py-14 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-10 items-center">
+      
+      <!-- Coluna de Conteúdo Institucional -->
+      <div class="lg:col-span-6 space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-ice border border-brand-royal/20 text-brand-royal text-[11px] font-extrabold uppercase tracking-wider">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-royal"></i>
+          <span>Governança Multidisciplinar em SST</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight leading-tight">
+          Proteção da vida, rigor pericial e blindagem jurídica para sua empresa
+        </h2>
+
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          Na <strong>A&C Governança em SST</strong>, unimos chão de fábrica, consultórios médicos e inteligência legal. Uma estrutura completa formada por <strong>médicos, engenheiros, TSTs, advogados trabalhistas e contadores</strong> para garantir total tranquilidade jurídica e fiscal.
+        </p>
+
+        <!-- Grade 2x2 do Corpo Técnico Completo -->
+        <div class="grid sm:grid-cols-2 gap-3 pt-1">
+          
+          <!-- 1. Medicina & Engenharia -->
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 transition-colors space-y-1">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center shrink-0">
+                <i data-lucide="stethoscope" class="w-3.5 h-3.5"></i>
+              </div>
+              <div class="text-xs font-black text-brand-navy">Medicina &amp; Engenharia</div>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug">
+              Médicos do trabalho (CRM) e engenheiros de segurança com anotação de responsabilidade técnica (ART/CREA).
+            </p>
+          </div>
+
+          <!-- 2. TSTs / Chão de Fábrica -->
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 transition-colors space-y-1">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-sky-50 text-brand-royal flex items-center justify-center shrink-0">
+                <i data-lucide="hard-hat" class="w-3.5 h-3.5"></i>
+              </div>
+              <div class="text-xs font-black text-brand-navy">Equipe de TSTs</div>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug">
+              Técnicos de segurança atuantes em inspeções de campo, DDS, rotinas de EPIs e aplicação prática das NRs.
+            </p>
+          </div>
+
+          <!-- 3. Equipe Jurídica -->
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 transition-colors space-y-1">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+              </div>
+              <div class="text-xs font-black text-brand-navy">Suporte Jurídico</div>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug">
+              Assessoria pericial trabalhista para contestação de laudos indevidos e prevenção de passivos judiciais.
+            </p>
+          </div>
+
+          <!-- 4. Equipe Contábil & Fiscal -->
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-brand-royal/40 transition-colors space-y-1">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+              </div>
+              <div class="text-xs font-black text-brand-navy">Inteligência Contábil</div>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug">
+              Auditoria de eventos eSocial, gestão do FAP/RAT tributário e cruzamento de dados com a folha e DCTFWeb.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Indicadores de Segurança / Confiabilidade -->
+        <div class="pt-2 flex flex-wrap items-center gap-5 text-xs text-slate-600 font-semibold border-t border-slate-100">
+          <span class="flex items-center gap-1.5 text-slate-700">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Suporte Pericial Integrado
+          </span>
+          <span class="flex items-center gap-1.5 text-slate-700">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-royal"></i> Otimização FAP / RAT
+          </span>
+          <span class="flex items-center gap-1.5 text-slate-700">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-royal"></i> Presença em Campo
+          </span>
+        </div>
+      </div>
+
+      <!-- Coluna da Galeria Dinâmica Compacta -->
+      <div class="lg:col-span-6 relative">
+        
+        <!-- Grid de Fotos 2x2 com Altura Uniforme -->
+        <div class="grid grid-cols-2 gap-3.5">
+          
+          <div class="space-y-3.5">
+            <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-100 h-44 group">
+              <img src="{{ img.sobre_1 | default('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80') }}" alt="Consultório Médico" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-100 h-44 group">
+              <img src="{{ img.sobre_2 | default('https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=500&q=80') }}" alt="Inspeção Técnica de Campo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+          </div>
+
+          <div class="space-y-3.5 pt-4">
+            <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-100 h-44 group">
+              <img src="{{ img.sobre_3 | default('https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=500&q=80') }}" alt="Atendimento Clínico" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-100 h-44 group">
+              <img src="{{ img.sobre_4 | default('https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=500&q=80') }}" alt="Treinamentos e NRs" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Selo Flutuante Central -->
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl shadow-xl border border-slate-200 text-center pointer-events-none">
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-brand-royal block">Governança Integrada</span>
+          <span class="text-xs font-black text-brand-navy">360° em SST</span>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= BOTÃO WHATSAPP FLUTUANTE PREMIUM COM MENSAGEM DIRETA ================= -->
+  <div class="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+    
+    <!-- Balão de Chamada Rápida (visível em telas sm/desktop) -->
+    <a 
+      href="https://wa.me/{{ whatsapp_num | default('5534920017086') }}?text=Ol%C3%A1!%20Acessei%20o%20site%20da%20A%26C%20Governan%C3%A7a%20e%20gostaria%20de%20solicitar%20uma%20proposta%20comercial." 
+      target="_blank" 
+      class="hidden sm:flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl border border-slate-200 text-xs font-bold text-slate-700 hover:text-brand-navy hover:shadow-2xl transition-all duration-300"
+    >
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+      <span>Fale com um Especialista</span>
+    </a>
+
+    <!-- Ícone Flutuante com Pulsar e Mensagem Configurada -->
+    <a 
+      href="https://wa.me/{{ whatsapp_num | default('5534920017086') }}?text=Ol%C3%A1!%20Acessei%20o%20site%20da%20A%26C%20Governan%C3%A7a%20e%20gostaria%20de%20solicitar%20uma%20proposta%20comercial." 
+      target="_blank" 
+      aria-label="Falar no WhatsApp com A&C Governança"
+      class="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 relative group"
+    >
+      <!-- Efeito de radar sutil ao redor do botão -->
+      <span class="absolute -inset-1 rounded-full bg-emerald-400/40 opacity-70 group-hover:animate-ping -z-10"></span>
+      <i data-lucide="message-circle" class="w-7 h-7"></i>
+    </a>
+
+  </div>
+
+  <!-- ================= RODAPÉ CORPORATIVO REFINADO ================= -->
+  <footer id="contato" class="bg-[#051321] text-slate-400 pt-14 pb-8 text-xs border-t border-white/5 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Grid Principal em 4 Colunas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-10 border-b border-white/10">
+        
+        <!-- Coluna 1: Identidade e Proposta (4 cols) -->
+        <div class="lg:col-span-4 space-y-4">
+          <img 
+  src="{{ img.logo | default('/static/img/logo.png') }}" 
+  alt="A&C SST" 
+  class="h-9 w-auto object-contain mb-3"
+>
+          <p class="text-slate-400 text-xs leading-relaxed max-w-sm">
+            Assessoria de alta performance em Saúde e Segurança do Trabalho. Integrando medicina ocupacional, engenharia preventiva, suporte jurídico pericial e inteligência contábil.
+          </p>
+          
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-bold text-brand-sky">eSocial S-2210/2220/2240</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-bold text-slate-300">Normas Regulamentadoras</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-bold text-emerald-400">ART &bull; CRM</span>
+          </div>
+        </div>
+
+        <!-- Coluna 2: Navegação & Acesso a Portais (2 cols) -->
+        <div class="lg:col-span-2 space-y-3">
+          <div class="text-xs font-black uppercase tracking-wider text-white">Navegação</div>
+          <ul class="space-y-2">
+            <li><a href="#inicio" class="hover:text-brand-sky transition-colors">Página Inicial</a></li>
+            <li><a href="#publico" class="hover:text-brand-sky transition-colors">Soluções Corporativas</a></li>
+            <li><a href="#exames" class="hover:text-brand-sky transition-colors">Exames &amp; ASO</a></li>
+            <li><a href="#metodo" class="hover:text-brand-sky transition-colors">Nosso Método</a></li>
+            <li><a href="#sobre" class="hover:text-brand-sky transition-colors">Corpo Multidisciplinar</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 3: Soluções Técnicas & Portais (3 cols) -->
+        <div class="lg:col-span-3 space-y-3">
+          <div class="text-xs font-black uppercase tracking-wider text-white">Sistemas &amp; Laudos</div>
+          <ul class="space-y-2">
+            <li><a href="#servicos" class="hover:text-brand-sky transition-colors">PGR &amp; GRO (NR-01)</a></li>
+            <li><a href="#servicos" class="hover:text-brand-sky transition-colors">PCMSO Clínico (NR-07)</a></li>
+            <li><a href="#servicos" class="hover:text-brand-sky transition-colors">LTCAT Previdenciário</a></li>
+            <li>
+              <a href="{{ portal_treinamento_url | default('https://aecsst.com.br/#/treinamentos') }}" target="_blank" class="inline-flex items-center gap-1.5 text-brand-sky hover:underline font-semibold">
+                <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i> Portal Treinamentos
+              </a>
+            </li>
+            <li>
+              <a href="{{ portal_cliente_url | default('https://aecsst.com.br/#/cliente') }}" target="_blank" class="inline-flex items-center gap-1.5 text-brand-sky hover:underline font-semibold">
+                <i data-lucide="user-check" class="w-3.5 h-3.5"></i> Portal do Cliente
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Coluna 4: Contato & Atendimento Comercial (3 cols) -->
+        <div class="lg:col-span-3 space-y-3">
+          <div class="text-xs font-black uppercase tracking-wider text-white">Canais de Contato</div>
+          <div class="space-y-2 text-slate-300">
+            <a href="https://wa.me/{{ whatsapp_num | default('5534920017086') }}?text=Ol%C3%A1!%20Acessei%20o%20site%20da%20A%26C%20Governan%C3%A7a%20e%20gostaria%20de%20um%20atendimento." target="_blank" class="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-bold">
+              <i data-lucide="message-circle" class="w-4 h-4 shrink-0"></i>
+              <span>(34) 92001-7086</span>
+            </a>
+            <div class="flex items-center gap-2">
+              <i data-lucide="mail" class="w-4 h-4 text-brand-sky shrink-0"></i>
+              <span class="truncate">{{ contact_email | default('contato@aecsst.com.br') }}</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i data-lucide="clock" class="w-4 h-4 text-brand-sky shrink-0 mt-0.5"></i>
+              <span>Segunda a Sexta: 07h30 às 17h30</span>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 pt-1">
+              <i data-lucide="shield" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+              <span>Atendimento In Company sob agendamento</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Barra Inferior de Direitos e Compliance -->
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-3 text-center sm:text-left">
+        <div>
+          &copy; 2026 <strong>A&C Governança em Saúde e Segurança do Trabalho</strong>. Todos os direitos reservados.
+        </div>
+        <div class="flex items-center gap-4 text-slate-400">
+          <span class="inline-flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3 text-slate-500"></i> Proteção de Dados LGPD</span>
+          <a href="/admin" class="hover:text-slate-300 transition-colors inline-flex items-center gap-1">
+            <i data-lucide="shield-check" class="w-3 h-3"></i> Painel Interno
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+  
+  <!-- ================= SCRIPTS DINÂMICOS ================= -->
+  <script>
+    // Inicialização dos ícones Lucide
+    lucide.createIcons();
+
+    // Rotação dinâmica das turmas de capacitação no Painel SST (Hero)
+    const turmasTreinamento = [
+      { titulo: "Capacitação NR-35 (Trabalho em Altura)", sub: "Turma concluída com emissão de certificados", tag: "Concluído" },
+      { titulo: "Treinamento NR-33 (Espaço Confinado)", sub: "Formação de Vigias e Supervisores de Entrada", tag: "Certificado" },
+      { titulo: "Formação CIPA - NR-05 (Gestão 2026)", sub: "Processo eleitoral e posse homologados", tag: "Homologado" },
+      { titulo: "Reciclagem NR-10 (Segurança em Eletricidade)", sub: "Prontuário das instalações elétricas atualizado", tag: "Concluído" },
+      { titulo: "Capacitação NR-12 (Máquinas e Equipamentos)", sub: "Apreciação de riscos e operação segura", tag: "Certificado" },
+      { titulo: "Treinamento Brigada de Incêndio (NR-23)", sub: "Módulo prático e evacuação de emergência", tag: "Concluído" },
+      { titulo: "Ergonomia no Trabalho - NR-17 (AEP/AET)", sub: "Treinamento postural e análise biomecânica", tag: "Concluído" }
+    ];
+
+    const turmaSorteada = turmasTreinamento[Math.floor(Math.random() * turmasTreinamento.length)];
+    const elTitulo = document.getElementById("turma-titulo");
+    const elSub = document.getElementById("turma-sub");
+    const elTag = document.getElementById("turma-tag");
+
+    if (elTitulo && elSub && elTag) {
+      elTitulo.innerText = turmaSorteada.titulo;
+      elSub.innerText = turmaSorteada.sub;
+      elTag.innerText = turmaSorteada.tag;
+    }
+
+    const elProt = document.getElementById("protocolo-esocial");
+    if (elProt) {
+      const protocoloRandom = "Recibo #" + Math.floor(100000 + Math.random() * 900000) + " - Gov.br";
+      elProt.innerText = protocoloRandom;
+    }
+
+    // Diagnóstico interativo do eSocial (Calcula em tempo real)
+    const chks = document.querySelectorAll('.chk-simulador');
+    const badgeStatus = document.getElementById('diagnostico-status');
+
+    function atualizarSimulador() {
+      const marcados = Array.from(chks).filter(c => c.checked).length;
+      if (!badgeStatus) return;
+
+      if (marcados === 3) {
+        badgeStatus.innerText = '100% Blindada • Em Dia';
+        badgeStatus.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30';
+      } else if (marcados > 0) {
+        badgeStatus.innerText = 'Atenção • Conformidade Parcial';
+        badgeStatus.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30';
+      } else {
+        badgeStatus.innerText = 'Risco de Autuação • Verifique';
+        badgeStatus.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-400/30';
+      }
+    }
+
+    chks.forEach(chk => chk.addEventListener('change', atualizarSimulador));
+  </script>
+</body>
+</html>
