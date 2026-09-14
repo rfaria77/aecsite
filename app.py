@@ -71,6 +71,38 @@ def init_db():
         )
     """)
 
+    # Se existir uma tabela site_texts com esquema legado/antigo, recria com o formato correto
+    cursor.execute("DROP TABLE IF EXISTS site_texts")
+
+    # Tabela de Textos e Métricas Dinâmicas (Esquema Oficial)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS site_texts (
+            chave TEXT PRIMARY KEY,
+            conteudo TEXT NOT NULL
+        )
+    """)
+
+    # Tabela de Candidaturas / Trabalhe Conosco
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS curriculos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL,
+            telefone TEXT NOT NULL,
+            area TEXT NOT NULL,
+            arquivo_curriculo TEXT NOT NULL,
+            data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    
+    # Tabela de Imagens Dinâmicas
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS site_images (
+            chave TEXT PRIMARY KEY,
+            url TEXT NOT NULL
+        )
+    """)
+
     # Tabela de Textos e Métricas Dinâmicas
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS site_texts (
