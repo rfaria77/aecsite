@@ -1,75 +1,69 @@
 import os
 import sqlite3
-from datetime import datetime
 import smtplib
-from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+from functools import wraps
+from flask import (
+    Flask, render_template, request, redirect, url_for, 
+    flash, session, send_from_directory, abort
+)
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, flash, Response
-from functools import wraps
 
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "aec-sst-secret-key-2026")
+app.secret_key = os.getenv("SECRET_KEY", "aec_secret_key_prod_2026_super_safe")
 
-DB_NAME = "leads.db"
-UPLOAD_FOLDER = os.path.join("static", "uploads")
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+# Configurações de Pastas de Upload
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER_IMG = os.path.join(BASE_DIR, "static", "uploads")
+UPLOAD_FOLDER_CURRICULOS = os.path.join(BASE_DIR, "static", "uploads", "curriculos")
 
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_IMG, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_CURRICULOS, exist_ok=True)
 
-DEFAULT_IMAGES = {
-    "logo": "/static/img/logo.png",
-    "servico_pgr": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
-    "servico_pcmso": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
-    "servico_treinamentos": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80",
-    "estrutura_recepcao": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80",
-    "estrutura_consultorio": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=600&q=80",
-    "estrutura_exames": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
-    "estrutura_treinamento": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80",
-    "sobre_1": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80",
-    "sobre_2": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=500&q=80",
-    "sobre_3": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=500&q=80",
-    "sobre_4": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=500&q=80"
-}
+app.config["UPLOAD_FOLDER_IMG"] = UPLOAD_FOLDER_IMG
+app.config["UPLOAD_FOLDER_CURRICULOS"] = UPLOAD_FOLDER_CURRICULOS
 
-DEFAULT_TEXTS = {
-    "stats_clientes_num": "+300",
-    "stats_clientes_titulo": "Clientes Atendidos",
-    "stats_clientes_desc": "Empresas fortalecidas com soluções integradas de SST.",
-    "stats_consultorias_num": "+125",
-    "stats_consultorias_titulo": "Consultorias Concluídas",
-    "stats_consultorias_desc": "Projetos entregues com rigor técnico e conformidade.",
-    "stats_horas_num": "+400h",
-    "stats_horas_titulo": "Horas de Treinamento",
-    "stats_horas_desc": "Capacitação prática em conformidade com as Normas Regulamentadoras."
-}
+ALLOWED_IMG_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "svg"}
+ALLOWED_DOC_EXTENSIONS = {"pdf", "doc", "docx"}
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+DB_PATH = os.path.join(BASE_DIR, "leads.db")
 
-# ==========================================
-# BANCO DE DADOS (SQLite)
-# ==========================================
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def allowed_img_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
+
+def allowed_doc_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_DOC_EXTENSIONS
+
+# ================= BANCO DE DADOS =================
+
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
-    
+
+    # Tabela de Leads Comerciais
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS leads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            data_envio TEXT NOT NULL,
             nome TEXT NOT NULL,
             empresa TEXT NOT NULL,
             telefone TEXT NOT NULL,
             vidas TEXT NOT NULL,
-            servico TEXT NOT NULL
+            servico TEXT NOT NULL,
+            data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
+    # Tabela de Imagens Dinâmicas
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS site_images (
             chave TEXT PRIMARY KEY,
@@ -77,144 +71,133 @@ def init_db():
         )
     """)
 
+    # Tabela de Textos e Métricas Dinâmicas
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS site_texts (
             chave TEXT PRIMARY KEY,
-            valor TEXT NOT NULL
+            conteudo TEXT NOT NULL
         )
     """)
 
-    for chave, url in DEFAULT_IMAGES.items():
+    # Tabela de Candidaturas / Trabalhe Conosco
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS curriculos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL,
+            telefone TEXT NOT NULL,
+            area TEXT NOT NULL,
+            arquivo_curriculo TEXT NOT NULL,
+            data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # Imagens Padrão
+    imagens_padrao = {
+        "logo": "/static/img/logo.png",
+        "servico_pgr": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
+        "servico_pcmso": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
+        "servico_treinamentos": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80",
+        "estrutura_recepcao": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80",
+        "estrutura_consultorio": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=600&q=80",
+        "estrutura_exames": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
+        "estrutura_treinamento": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80",
+        "sobre_1": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80",
+        "sobre_2": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=500&q=80",
+        "sobre_3": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=500&q=80",
+        "sobre_4": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=500&q=80"
+    }
+
+    for chave, url in imagens_padrao.items():
         cursor.execute("INSERT OR IGNORE INTO site_images (chave, url) VALUES (?, ?)", (chave, url))
 
-    for chave, valor in DEFAULT_TEXTS.items():
-        cursor.execute("INSERT OR IGNORE INTO site_texts (chave, valor) VALUES (?, ?)", (chave, valor))
+    # Textos e Métricas Padrão
+    textos_padrao = {
+        "stats_clientes_num": "450+",
+        "stats_clientes_titulo": "Empresas Assessoradas",
+        "stats_clientes_desc": "Conformidade e gestão contínua de SST em diversos segmentos.",
+        "stats_consultorias_num": "100%",
+        "stats_consultorias_titulo": "Conformidade eSocial",
+        "stats_consultorias_desc": "Disparos dentro dos prazos legais dos eventos S-2210, S-2220 e S-2240.",
+        "stats_horas_num": "15k+",
+        "stats_horas_titulo": "ASOs e Laudos Emitidos",
+        "stats_horas_desc": "Prontidão clínica e respaldo pericial completo com ART e CRM."
+    }
+
+    for chave, conteudo in textos_padrao.items():
+        cursor.execute("INSERT OR IGNORE INTO site_texts (chave, conteudo) VALUES (?, ?)", (chave, conteudo))
 
     conn.commit()
     conn.close()
+
+init_db()
 
 def get_site_images():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("SELECT chave, url FROM site_images")
-    rows = cursor.fetchall()
+    conn = get_db_connection()
+    rows = conn.execute("SELECT chave, url FROM site_images").fetchall()
     conn.close()
-    
-    imagens = DEFAULT_IMAGES.copy()
-    for chave, url in rows:
-        imagens[chave] = url
-    return imagens
-
-def update_image_url(chave, url):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("INSERT OR REPLACE INTO site_images (chave, url) VALUES (?, ?)", (chave, url))
-    conn.commit()
-    conn.close()
+    return {row["chave"]: row["url"] for row in rows}
 
 def get_site_texts():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("SELECT chave, valor FROM site_texts")
-    rows = cursor.fetchall()
+    conn = get_db_connection()
+    rows = conn.execute("SELECT chave, conteudo FROM site_texts").fetchall()
     conn.close()
-    
-    textos = DEFAULT_TEXTS.copy()
-    for chave, valor in rows:
-        textos[chave] = valor
-    return textos
+    return {row["chave"]: row["conteudo"] for row in rows}
 
-def update_site_texts(novos_textos):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    for chave, valor in novos_textos.items():
-        cursor.execute("INSERT OR REPLACE INTO site_texts (chave, valor) VALUES (?, ?)", (chave, valor.strip()))
-    conn.commit()
-    conn.close()
+# ================= NOTIFICAÇÃO SMTP =================
 
-def salvar_lead(nome, empresa, telefone, vidas, servico):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        cursor.execute("""
-            INSERT INTO leads (data_envio, nome, empresa, telefone, vidas, servico)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (agora, nome, empresa, telefone, vidas, servico))
-        conn.commit()
-        conn.close()
-        return True
-    except Exception as e:
-        print(f"❌ [ERRO DB] Falha ao salvar no banco: {e}")
-        return False
-
-# ==========================================
-# AUTENTICAÇÃO BÁSICA
-# ==========================================
-def check_auth(username, password):
-    admin_user = os.getenv("ADMIN_USER", "admin")
-    admin_pass = os.getenv("ADMIN_PASS", "aec2026")
-    return username == admin_user and password == admin_pass
-
-def authenticate():
-    return Response(
-        "Acesso restrito. Faça login com credenciais de administrador.",
-        401,
-        {"WWW-Authenticate": 'Basic realm="Login Obrigatorio"'}
-    )
-
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
-
-# ==========================================
-# ENVIO DE E-MAIL
-# ==========================================
-def enviar_email_proposta(nome, empresa, telefone, vidas, servico):
-    servidor_smtp = os.getenv("MAIL_SERVER")
-    porta_smtp = int(os.getenv("MAIL_PORT", 587))
-    usuario_smtp = os.getenv("MAIL_USERNAME")
-    senha_smtp = os.getenv("MAIL_PASSWORD")
+def enviar_alerta_email(lead_data):
+    smtp_server = os.getenv("MAIL_SERVER")
+    smtp_port = int(os.getenv("MAIL_PORT", 587))
+    smtp_user = os.getenv("MAIL_USERNAME")
+    smtp_pass = os.getenv("MAIL_PASSWORD")
     destinatario = os.getenv("MAIL_DESTINATARIO", "contato@aecsst.com.br")
 
-    if not servidor_smtp or not usuario_smtp or not senha_smtp:
+    if not all([smtp_server, smtp_user, smtp_pass]):
         return False
 
-    mensagem = MIMEMultipart()
-    mensagem["From"] = usuario_smtp
-    mensagem["To"] = destinatario
-    mensagem["Subject"] = f"🔔 Novo Orçamento no Site: {empresa} - {nome}"
+    msg = MIMEMultipart()
+    msg["From"] = f"A&C SST Site <{smtp_user}>"
+    msg["To"] = destinatario
+    msg["Subject"] = f"Novo Lead Comercial: {lead_data['empresa']} ({lead_data['nome']})"
 
     corpo = f"""
-    Nova proposta comercial solicitada no site:
-    Nome: {nome}
-    Empresa: {empresa}
-    Telefone/WhatsApp: {telefone}
-    Vidas: {vidas}
-    Serviço: {servico}
-    Data: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
+    NOVO CONTATO RECEBIDO PELO SITE - A&C GOVERNANÇA EM SST
+    -------------------------------------------------------
+    Nome / Responsável: {lead_data['nome']}
+    Empresa / Razão Social: {lead_data['empresa']}
+    WhatsApp / Telefone: {lead_data['telefone']}
+    Nº de Colaboradores: {lead_data['vidas']}
+    Serviço de Interesse: {lead_data['servico']}
+    Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
+    -------------------------------------------------------
+    Mensagem enviada automaticamente pelo sistema do site.
     """
-    mensagem.attach(MIMEText(corpo, "plain", "utf-8"))
+    msg.attach(MIMEText(corpo, "plain", "utf-8"))
 
     try:
-        servidor = smtplib.SMTP(servidor_smtp, porta_smtp)
-        servidor.starttls()
-        servidor.login(usuario_smtp, senha_smtp)
-        servidor.sendmail(usuario_smtp, destinatario, mensagem.as_string())
-        servidor.quit()
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+        server.send_message(msg)
+        server.quit()
         return True
     except Exception as e:
-        print(f"❌ [ERRO SMTP] Falha ao enviar e-mail: {e}")
+        print(f"Aviso: Erro no envio do e-mail: {e}")
         return False
 
-# ==========================================
-# ROTAS PÚBLICAS
-# ==========================================
+# ================= DECORATOR DE AUTENTICAÇÃO =================
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("admin_logado"):
+            return redirect(url_for("admin_login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ================= ROTAS PÚBLICAS =================
+
 @app.route("/", methods=["GET"])
 def home():
     imagens = get_site_images()
@@ -222,7 +205,7 @@ def home():
     dados_site = {
         "page_title": "A&C Governança em Saúde e Segurança do Trabalho",
         "contact_email": os.getenv("MAIL_DESTINATARIO", "contato@aecsst.com.br"),
-        "whatsapp_num": os.getenv("WHATSAPP_NUM", "5534920017086"),  # <-- NÚMERO ATUALIZADO
+        "whatsapp_num": os.getenv("WHATSAPP_NUM", "5534920017086"),
         "portal_treinamento_url": "https://aecsst.com.br/#/treinamentos",
         "portal_cliente_url": "https://aecsst.com.br/#/cliente",
         "img": imagens,
@@ -238,81 +221,204 @@ def contato():
     vidas = request.form.get("vidas", "").strip()
     servico = request.form.get("servico", "").strip()
 
-    salvar_lead(nome, empresa, telefone, vidas, servico)
-    enviar_email_proposta(nome, empresa, telefone, vidas, servico)
+    if not all([nome, empresa, telefone]):
+        flash("Por favor, preencha todos os campos obrigatórios.", "erro")
+        return redirect(url_for("home") + "#proposta")
 
-    flash("Proposta enviada com sucesso! Entraremos em contato em breve.", "sucesso")
-    return redirect(url_for("home", _anchor="proposta"))
-
-# ==========================================
-# ROTAS ADMINISTRATIVAS
-# ==========================================
-@app.route("/admin")
-@requires_auth
-def admin_dashboard():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM leads")
-    total_leads = cursor.fetchone()[0]
+    conn = get_db_connection()
+    conn.execute("""
+        INSERT INTO leads (nome, empresa, telefone, vidas, servico)
+        VALUES (?, ?, ?, ?, ?)
+    """, (nome, empresa, telefone, vidas, servico))
+    conn.commit()
     conn.close()
-    return render_template("admin_dashboard.html", total_leads=total_leads)
 
-@app.route("/admin/leads")
-@requires_auth
-def admin_leads():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, data_envio, nome, empresa, telefone, vidas, servico FROM leads ORDER BY id DESC")
-    leads = cursor.fetchall()
-    conn.close()
-    return render_template("admin_leads.html", leads=leads)
+    enviar_alerta_email({
+        "nome": nome,
+        "empresa": empresa,
+        "telefone": telefone,
+        "vidas": vidas,
+        "servico": servico
+    })
 
-@app.route("/admin/imagens", methods=["GET", "POST"])
-@requires_auth
-def admin_imagens():
+    flash("Sua solicitação foi enviada com sucesso! Nossos especialistas entrarão em contato em breve.", "sucesso")
+    return redirect(url_for("home") + "#proposta")
+
+@app.route("/trabalhe-conosco", methods=["POST"])
+def trabalhe_conosco():
+    nome = request.form.get("nome", "").strip()
+    email = request.form.get("email", "").strip()
+    telefone = request.form.get("telefone", "").strip()
+    area = request.form.get("area", "").strip()
+    arquivo = request.files.get("curriculo")
+
+    if not all([nome, email, telefone, area]):
+        flash("Preencha todos os campos cadastrais.", "erro_curriculo")
+        return redirect(url_for("home") + "#trabalhe-conosco")
+
+    if not arquivo or arquivo.filename == "":
+        flash("Por favor, selecione e anexe seu currículo (PDF ou DOCX).", "erro_curriculo")
+        return redirect(url_for("home") + "#trabalhe-conosco")
+
+    if arquivo and allowed_doc_file(arquivo.filename):
+        ext = arquivo.filename.rsplit(".", 1)[1].lower()
+        nome_limpo = "".join(c for c in nome if c.isalnum() or c in (" ", "_", "-")).strip().replace(" ", "_")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nome_arquivo = secure_filename(f"CV_{nome_limpo}_{timestamp}.{ext}")
+
+        caminho_final = os.path.join(app.config["UPLOAD_FOLDER_CURRICULOS"], nome_arquivo)
+        arquivo.save(caminho_final)
+
+        conn = get_db_connection()
+        conn.execute("""
+            INSERT INTO curriculos (nome, email, telefone, area, arquivo_curriculo)
+            VALUES (?, ?, ?, ?, ?)
+        """, (nome, email, telefone, area, nome_arquivo))
+        conn.commit()
+        conn.close()
+
+        flash("Candidatura cadastrada com sucesso! Nosso RH analisará seu perfil.", "sucesso_curriculo")
+        return redirect(url_for("home") + "#trabalhe-conosco")
+    else:
+        flash("Formato de currículo inválido. Use apenas arquivos .PDF, .DOC ou .DOCX.", "erro_curriculo")
+        return redirect(url_for("home") + "#trabalhe-conosco")
+
+# ================= PAINEL ADMINISTRATIVO =================
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if session.get("admin_logado"):
+        return redirect(url_for("admin_dashboard"))
+
     if request.method == "POST":
-        chave = request.form.get("chave")
-        arquivo = request.files.get("arquivo")
+        usuario = request.form.get("usuario")
+        senha = request.form.get("senha")
+        
+        user_padrao = os.getenv("ADMIN_USER", "admin")
+        pass_padrao = os.getenv("ADMIN_PASS", "aec2026admin")
 
-        if chave and arquivo and arquivo.filename != "" and allowed_file(arquivo.filename):
-            extensao = arquivo.filename.rsplit(".", 1)[1].lower()
-            nome_seguro = f"{chave}_{int(datetime.now().timestamp())}.{extensao}"
-            caminho_completo = os.path.join(app.config["UPLOAD_FOLDER"], nome_seguro)
-            arquivo.save(caminho_completo)
-
-            url_publica = f"/static/uploads/{nome_seguro}"
-            update_image_url(chave, url_publica)
-            flash("Imagem atualizada com sucesso!", "sucesso")
+        if usuario == user_padrao and senha == pass_padrao:
+            session["admin_logado"] = True
+            flash("Login efetuado com sucesso.", "sucesso")
+            return redirect(url_for("admin_dashboard"))
         else:
-            flash("Formato de arquivo inválido ou não selecionado.", "erro")
+            flash("Credenciais de acesso incorretas.", "erro")
 
-        return redirect(url_for("admin_imagens"))
+    return render_template("login.html")
 
-    imagens = get_site_images()
-    return render_template("admin_imagens.html", imagens=imagens)
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_logado", None)
+    flash("Sessão encerrada com sucesso.", "sucesso")
+    return redirect(url_for("admin_login"))
 
-@app.route("/admin/metricas", methods=["GET", "POST"])
-@requires_auth
-def admin_metricas():
-    if request.method == "POST":
-        novos_textos = {
-            "stats_clientes_num": request.form.get("stats_clientes_num", "+300"),
-            "stats_clientes_titulo": request.form.get("stats_clientes_titulo", "Clientes Atendidos"),
-            "stats_clientes_desc": request.form.get("stats_clientes_desc", ""),
-            "stats_consultorias_num": request.form.get("stats_consultorias_num", "+125"),
-            "stats_consultorias_titulo": request.form.get("stats_consultorias_titulo", "Consultorias Concluídas"),
-            "stats_consultorias_desc": request.form.get("stats_consultorias_desc", ""),
-            "stats_horas_num": request.form.get("stats_horas_num", "+400h"),
-            "stats_horas_titulo": request.form.get("stats_horas_titulo", "Horas de Treinamento"),
-            "stats_horas_desc": request.form.get("stats_horas_desc", "")
-        }
-        update_site_texts(novos_textos)
-        flash("Indicadores atualizados com sucesso!", "sucesso")
-        return redirect(url_for("admin_metricas"))
+@app.route("/admin", methods=["GET"])
+@login_required
+def admin_dashboard():
+    conn = get_db_connection()
+    leads = conn.execute("SELECT * FROM leads ORDER BY data_envio DESC").fetchall()
+    curriculos = conn.execute("SELECT * FROM curriculos ORDER BY data_envio DESC").fetchall()
+    imagens = conn.execute("SELECT chave, url FROM site_images").fetchall()
+    textos = conn.execute("SELECT chave, conteudo FROM site_texts").fetchall()
+    conn.close()
 
-    textos = get_site_texts()
-    return render_template("admin_metricas.html", txt=textos)
+    img_dict = {img["chave"]: img["url"] for img in imagens}
+    txt_dict = {txt["chave"]: txt["conteudo"] for txt in textos}
+
+    return render_template(
+        "admin.html", 
+        leads=leads, 
+        curriculos=curriculos, 
+        img=img_dict, 
+        txt=txt_dict
+    )
+
+@app.route("/admin/atualizar-imagem", methods=["POST"])
+@login_required
+def admin_atualizar_imagem():
+    chave = request.form.get("chave")
+    url_remota = request.form.get("url_remota", "").strip()
+    arquivo = request.files.get("arquivo_imagem")
+
+    url_final = None
+
+    if arquivo and arquivo.filename != "":
+        if allowed_img_file(arquivo.filename):
+            ext = arquivo.filename.rsplit(".", 1)[1].lower()
+            nome_arquivo = secure_filename(f"{chave}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}")
+            caminho_salvar = os.path.join(app.config["UPLOAD_FOLDER_IMG"], nome_arquivo)
+            arquivo.save(caminho_salvar)
+            url_final = f"/static/uploads/{nome_arquivo}"
+        else:
+            flash("Formato de imagem inválido. Formatos aceitos: PNG, JPG, JPEG, WEBP, SVG.", "erro")
+            return redirect(url_for("admin_dashboard"))
+    elif url_remota:
+        url_final = url_remota
+
+    if url_final:
+        conn = get_db_connection()
+        conn.execute("INSERT OR REPLACE INTO site_images (chave, url) VALUES (?, ?)", (chave, url_final))
+        conn.commit()
+        conn.close()
+        flash(f"Imagem de '{chave}' atualizada com sucesso.", "sucesso")
+    else:
+        flash("Nenhuma imagem enviada ou URL especificada.", "erro")
+
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/atualizar-metricas", methods=["POST"])
+@login_required
+def admin_atualizar_metricas():
+    campos = [
+        "stats_clientes_num", "stats_clientes_titulo", "stats_clientes_desc",
+        "stats_consultorias_num", "stats_consultorias_titulo", "stats_consultorias_desc",
+        "stats_horas_num", "stats_horas_titulo", "stats_horas_desc"
+    ]
+
+    conn = get_db_connection()
+    for campo in campos:
+        valor = request.form.get(campo, "").strip()
+        if valor:
+            conn.execute("INSERT OR REPLACE INTO site_texts (chave, conteudo) VALUES (?, ?)", (campo, valor))
+    conn.commit()
+    conn.close()
+
+    flash("Métricas e indicadores operacionais atualizados com sucesso.", "sucesso")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/curriculo/<path:filename>")
+@login_required
+def baixar_curriculo(filename):
+    safe_filename = secure_filename(filename)
+    return send_from_directory(app.config["UPLOAD_FOLDER_CURRICULOS"], safe_filename, as_attachment=True)
+
+@app.route("/admin/excluir-lead/<int:id>", methods=["POST"])
+@login_required
+def excluir_lead(id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM leads WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    flash("Lead removido com sucesso.", "sucesso")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/excluir-curriculo/<int:id>", methods=["POST"])
+@login_required
+def excluir_curriculo(id):
+    conn = get_db_connection()
+    cv = conn.execute("SELECT arquivo_curriculo FROM curriculos WHERE id = ?", (id,)).fetchone()
+    if cv:
+        caminho_arq = os.path.join(app.config["UPLOAD_FOLDER_CURRICULOS"], cv["arquivo_curriculo"])
+        if os.path.exists(caminho_arq):
+            try:
+                os.remove(caminho_arq)
+            except OSError:
+                pass
+        conn.execute("DELETE FROM curriculos WHERE id = ?", (id,))
+        conn.commit()
+    conn.close()
+    flash("Candidatura removida.", "sucesso")
+    return redirect(url_for("admin_dashboard"))
 
 if __name__ == "__main__":
-    init_db()
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)

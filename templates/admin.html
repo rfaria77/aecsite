@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Gestão SST | A&C Governança</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#0A2540',
+              royal: '#0077D4',
+              sky: '#38BDF8',
+              ice: '#F0F9FF'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOPO ADMINISTRATIVO -->
+  <header class="bg-brand-navy text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-brand-royal flex items-center justify-center font-black text-xs text-white">A&C</div>
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-brand-sky block">Console de Gestão</span>
+          <h1 class="text-sm font-bold text-white">Governança SST &bull; Backoffice</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" target="_blank" class="text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5 rounded-lg bg-white/10 transition-colors flex items-center gap-1.5">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Ver Site
+        </a>
+        <a href="{{ url_for('admin_logout') }}" class="text-xs font-bold text-rose-300 hover:text-rose-100 px-3 py-1.5 rounded-lg bg-rose-500/20 transition-colors flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Sair
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-8">
+    
+    <!-- MENSAGENS FLASH -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="p-3.5 rounded-xl text-xs font-bold flex items-center gap-2 {% if category == 'sucesso' %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-rose-100 text-rose-800 border border-rose-300{% endif %}">
+            <i data-lucide="info" class="w-4 h-4 shrink-0"></i>
+            <span>{{ msg }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- CARDS DE CONTROLE RÁPIDO -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold uppercase text-slate-400">Leads Comerciais</span>
+          <div class="text-2xl font-black text-brand-navy mt-0.5">{{ leads|length }}</div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-brand-ice text-brand-royal flex items-center justify-center">
+          <i data-lucide="users" class="w-5 h-5"></i>
+        </div>
+      </div>
+      <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold uppercase text-slate-400">Banco de Currículos</span>
+          <div class="text-2xl font-black text-emerald-600 mt-0.5">{{ curriculos|length }}</div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+        </div>
+      </div>
+      <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold uppercase text-slate-400">Conformidade eSocial</span>
+          <div class="text-2xl font-black text-brand-royal mt-0.5">100% Ativa</div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-sky-50 text-brand-royal flex items-center justify-center">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 1: BANCO DE TALENTOS & CURRÍCULOS RECEBIDOS -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="file-user" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-black text-brand-navy uppercase tracking-wider">Candidaturas &bull; Trabalhe Conosco</h2>
+            <p class="text-[11px] text-slate-400">Currículos enviados por médicos, engenheiros, TSTs e profissionais de SST</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg">{{ curriculos|length }} recebidos</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-100">
+            <tr>
+              <th class="px-6 py-3">Candidato / E-mail</th>
+              <th class="px-6 py-3">Telefone</th>
+              <th class="px-6 py-3">Área de Atuação</th>
+              <th class="px-6 py-3">Data</th>
+              <th class="px-6 py-3 text-right">Ação</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for cv in curriculos %}
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-6 py-3.5">
+                  <span class="font-bold text-brand-navy block">{{ cv.nome }}</span>
+                  <span class="text-slate-400 text-[11px]">{{ cv.email }}</span>
+                </td>
+                <td class="px-6 py-3.5 font-medium text-slate-600">
+                  <a href="https://wa.me/55{{ cv.telefone|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}" target="_blank" class="text-emerald-600 hover:underline font-bold flex items-center gap-1">
+                    <i data-lucide="phone" class="w-3 h-3"></i> {{ cv.telefone }}
+                  </a>
+                </td>
+                <td class="px-6 py-3.5">
+                  <span class="px-2 py-0.5 rounded bg-brand-ice text-brand-royal font-bold text-[10px] border border-brand-royal/20">
+                    {{ cv.area }}
+                  </span>
+                </td>
+                <td class="px-6 py-3.5 text-slate-400 text-[11px]">{{ cv.data_envio }}</td>
+                <td class="px-6 py-3.5 text-right space-x-2">
+                  <a href="{{ url_for('baixar_curriculo', filename=cv.arquivo_curriculo) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] transition-all">
+                    <i data-lucide="download" class="w-3 h-3"></i> Baixar CV
+                  </a>
+                  <form action="{{ url_for('excluir_curriculo', id=cv.id) }}" method="POST" class="inline" onsubmit="return confirm('Excluir este currículo permanentemente?');">
+                    <button type="submit" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Excluir">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-slate-400 text-xs">
+                  Nenhum currículo recebido até o momento.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 2: LEADS COMERCIAIS RECEBIDOS -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-brand-ice text-brand-royal flex items-center justify-center">
+            <i data-lucide="briefcase" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-black text-brand-navy uppercase tracking-wider">Solicitações Comerciais (Leads)</h2>
+            <p class="text-[11px] text-slate-400">Contatos recebidos pelo formulário de proposta</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg">{{ leads|length }} empresas</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-100">
+            <tr>
+              <th class="px-6 py-3">Empresa / Contato</th>
+              <th class="px-6 py-3">WhatsApp</th>
+              <th class="px-6 py-3">Porte / Vidas</th>
+              <th class="px-6 py-3">Serviço de Interesse</th>
+              <th class="px-6 py-3">Data</th>
+              <th class="px-6 py-3 text-right">Ação</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for lead in leads %}
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-6 py-3.5">
+                  <span class="font-bold text-brand-navy block">{{ lead.empresa }}</span>
+                  <span class="text-slate-400 text-[11px]">{{ lead.nome }}</span>
+                </td>
+                <td class="px-6 py-3.5">
+                  <a href="https://wa.me/55{{ lead.telefone|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}" target="_blank" class="text-emerald-600 hover:underline font-bold flex items-center gap-1">
+                    <i data-lucide="phone" class="w-3 h-3"></i> {{ lead.telefone }}
+                  </a>
+                </td>
+                <td class="px-6 py-3.5 text-slate-600">{{ lead.vidas }} vidas</td>
+                <td class="px-6 py-3.5 font-medium text-slate-700">{{ lead.servico }}</td>
+                <td class="px-6 py-3.5 text-slate-400 text-[11px]">{{ lead.data_envio }}</td>
+                <td class="px-6 py-3.5 text-right">
+                  <form action="{{ url_for('excluir_lead', id=lead.id) }}" method="POST" class="inline" onsubmit="return confirm('Remover este lead?');">
+                    <button type="submit" class="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Excluir">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-slate-400 text-xs">
+                  Nenhuma solicitação comercial recebida ainda.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 3: EDIÇÃO DE MÉTRICAS E NÚMEROS DO SITE -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+      <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+        <div class="w-8 h-8 rounded-lg bg-sky-50 text-brand-royal flex items-center justify-center">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h2 class="text-sm font-black text-brand-navy uppercase tracking-wider">Métricas &amp; Números de Destaque</h2>
+          <p class="text-[11px] text-slate-400">Valores exibidos na barra de estatísticas do site</p>
+        </div>
+      </div>
+
+      <form action="{{ url_for('admin_atualizar_metricas') }}" method="POST" class="space-y-4">
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/60 space-y-2">
+            <label class="block text-[11px] font-bold text-brand-navy uppercase">Coluna 1: Clientes</label>
+            <input type="text" name="stats_clientes_num" value="{{ txt.stats_clientes_num }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold" placeholder="450+">
+            <input type="text" name="stats_clientes_titulo" value="{{ txt.stats_clientes_titulo }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs" placeholder="Empresas Assessoradas">
+            <input type="text" name="stats_clientes_desc" value="{{ txt.stats_clientes_desc }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-500" placeholder="Descrição">
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/60 space-y-2">
+            <label class="block text-[11px] font-bold text-brand-navy uppercase">Coluna 2: eSocial</label>
+            <input type="text" name="stats_consultorias_num" value="{{ txt.stats_consultorias_num }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold" placeholder="100%">
+            <input type="text" name="stats_consultorias_titulo" value="{{ txt.stats_consultorias_titulo }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs" placeholder="Conformidade eSocial">
+            <input type="text" name="stats_consultorias_desc" value="{{ txt.stats_consultorias_desc }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-500" placeholder="Descrição">
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/60 space-y-2">
+            <label class="block text-[11px] font-bold text-brand-navy uppercase">Coluna 3: ASOs/Laudos</label>
+            <input type="text" name="stats_horas_num" value="{{ txt.stats_horas_num }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold" placeholder="15k+">
+            <input type="text" name="stats_horas_titulo" value="{{ txt.stats_horas_titulo }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs" placeholder="ASOs e Laudos Emitidos">
+            <input type="text" name="stats_horas_desc" value="{{ txt.stats_horas_desc }}" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-500" placeholder="Descrição">
+          </div>
+        </div>
+
+        <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-royal hover:bg-[#0066B8] text-white font-black text-xs uppercase tracking-wider shadow transition-all flex items-center gap-2">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i> Salvar Métricas
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>
