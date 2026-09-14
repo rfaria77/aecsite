@@ -17,7 +17,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "aec_secret_key_prod_2026_super_safe")
 
-# Configurações de Pastas de Upload
+# Pastas de Upload
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER_IMG = os.path.join(BASE_DIR, "static", "uploads")
 UPLOAD_FOLDER_CURRICULOS = os.path.join(BASE_DIR, "static", "uploads", "curriculos")
@@ -31,6 +31,7 @@ app.config["UPLOAD_FOLDER_CURRICULOS"] = UPLOAD_FOLDER_CURRICULOS
 ALLOWED_IMG_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "svg"}
 ALLOWED_DOC_EXTENSIONS = {"pdf", "doc", "docx"}
 
+# Arquivo SQLite novo para anular esquemas antigos herdados
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 
 def get_db_connection():
@@ -71,7 +72,7 @@ def init_db():
         )
     """)
 
-    # Cria ou recria a tabela com a coluna conteudo
+    # Validação e criação de site_texts
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS site_texts (
             chave TEXT PRIMARY KEY,
@@ -79,7 +80,6 @@ def init_db():
         )
     """)
 
-    # Garantia caso a tabela já existisse sem a coluna conteudo
     cursor.execute("PRAGMA table_info(site_texts)")
     colunas = [col[1] for col in cursor.fetchall()]
     if "conteudo" not in colunas:
@@ -91,106 +91,7 @@ def init_db():
             )
         """)
 
-    # Tabela de Candidaturas / Trabalhe Conosco
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS curriculos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL,
-            telefone TEXT NOT NULL,
-            area TEXT NOT NULL,
-            arquivo_curriculo TEXT NOT NULL,
-            data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # Imagens Padrão
-    imagens_padrao = {
-        "logo": "/static/img/logo.png",
-        "servico_pgr": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
-        "servico_pcmso": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
-        "servico_treinamentos": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80",
-        "estrutura_recepcao": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80",
-        "estrutura_consultorio": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=600&q=80",
-        "estrutura_exames": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
-        "estrutura_treinamento": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80",
-        "sobre_1": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80",
-        "sobre_2": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=500&q=80",
-        "sobre_3": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=500&q=80",
-        "sobre_4": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=500&q=80"
-    }
-
-    for chave, url in imagens_padrao.items():
-        cursor.execute("INSERT OR IGNORE INTO site_images (chave, url) VALUES (?, ?)", (chave, url))
-
-    # Textos Padrão
-    textos_padrao = {
-        "stats_clientes_num": "450+",
-        "stats_clientes_titulo": "Empresas Assessoradas",
-        "stats_clientes_desc": "Conformidade e gestão contínua de SST em diversos segmentos.",
-        "stats_consultorias_num": "100%",
-        "stats_consultorias_titulo": "Conformidade eSocial",
-        "stats_consultorias_desc": "Disparos dentro dos prazos legais dos eventos S-2210, S-2220 e S-2240.",
-        "stats_horas_num": "15k+",
-        "stats_horas_titulo": "ASOs e Laudos Emitidos",
-        "stats_horas_desc": "Prontidão clínica e respaldo pericial completo com ART e CRM."
-    }
-
-    for chave, conteudo in textos_padrao.items():
-        cursor.execute("INSERT OR IGNORE INTO site_texts (chave, conteudo) VALUES (?, ?)", (chave, conteudo))
-
-    conn.commit()
-    conn.close()
-
-    # Tabela de Imagens Dinâmicas
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS site_images (
-            chave TEXT PRIMARY KEY,
-            url TEXT NOT NULL
-        )
-    """)
-
-    # Se existir uma tabela site_texts com esquema legado/antigo, recria com o formato correto
-    cursor.execute("DROP TABLE IF EXISTS site_texts")
-
-    # Tabela de Textos e Métricas Dinâmicas (Esquema Oficial)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS site_texts (
-            chave TEXT PRIMARY KEY,
-            conteudo TEXT NOT NULL
-        )
-    """)
-
-    # Tabela de Candidaturas / Trabalhe Conosco
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS curriculos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL,
-            telefone TEXT NOT NULL,
-            area TEXT NOT NULL,
-            arquivo_curriculo TEXT NOT NULL,
-            data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # Tabela de Imagens Dinâmicas
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS site_images (
-            chave TEXT PRIMARY KEY,
-            url TEXT NOT NULL
-        )
-    """)
-
-    # Tabela de Textos e Métricas Dinâmicas
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS site_texts (
-            chave TEXT PRIMARY KEY,
-            conteudo TEXT NOT NULL
-        )
-    """)
-
-    # Tabela de Candidaturas / Trabalhe Conosco
+    # Tabela de Currículos
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS curriculos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -282,7 +183,7 @@ def enviar_alerta_email(lead_data):
     Serviço de Interesse: {lead_data['servico']}
     Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
     -------------------------------------------------------
-    Mensagem enviada automaticamente pelo sistema do site.
+    Mensagem enviada automaticamente pelo sistema.
     """
     msg.attach(MIMEText(corpo, "plain", "utf-8"))
 
@@ -294,10 +195,10 @@ def enviar_alerta_email(lead_data):
         server.quit()
         return True
     except Exception as e:
-        print(f"Aviso: Erro no envio do e-mail: {e}")
+        print(f"Aviso: Falha no envio SMTP: {e}")
         return False
 
-# ================= DECORATOR DE AUTENTICAÇÃO =================
+# ================= AUTENTICAÇÃO =================
 
 def login_required(f):
     @wraps(f)
@@ -391,10 +292,10 @@ def trabalhe_conosco():
         flash("Candidatura cadastrada com sucesso! Nosso RH analisará seu perfil.", "sucesso_curriculo")
         return redirect(url_for("home") + "#trabalhe-conosco")
     else:
-        flash("Formato de currículo inválido. Use apenas arquivos .PDF, .DOC ou .DOCX.", "erro_curriculo")
+        flash("Formato de currículo inválido. Use arquivos .PDF, .DOC ou .DOCX.", "erro_curriculo")
         return redirect(url_for("home") + "#trabalhe-conosco")
 
-# ================= PAINEL ADMINISTRATIVO =================
+# ================= ÁREA ADMINISTRATIVA =================
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
@@ -461,7 +362,7 @@ def admin_atualizar_imagem():
             arquivo.save(caminho_salvar)
             url_final = f"/static/uploads/{nome_arquivo}"
         else:
-            flash("Formato de imagem inválido. Formatos aceitos: PNG, JPG, JPEG, WEBP, SVG.", "erro")
+            flash("Formato de imagem inválido. Use PNG, JPG, JPEG, WEBP ou SVG.", "erro")
             return redirect(url_for("admin_dashboard"))
     elif url_remota:
         url_final = url_remota
@@ -471,7 +372,7 @@ def admin_atualizar_imagem():
         conn.execute("INSERT OR REPLACE INTO site_images (chave, url) VALUES (?, ?)", (chave, url_final))
         conn.commit()
         conn.close()
-        flash(f"Imagem de '{chave}' atualizada com sucesso.", "sucesso")
+        flash(f"Imagem '{chave}' atualizada com sucesso.", "sucesso")
     else:
         flash("Nenhuma imagem enviada ou URL especificada.", "erro")
 
