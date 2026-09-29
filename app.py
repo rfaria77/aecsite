@@ -347,6 +347,7 @@ def admin_dashboard():
 
     
 @app.route("/admin/atualizar-imagem", methods=["POST"])
+@app.route("/admin/imagens", methods=["GET", "POST"])
 @login_required
 def admin_atualizar_imagem():
     chave = request.form.get("chave")
