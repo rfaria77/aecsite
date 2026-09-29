@@ -352,7 +352,8 @@ def admin_dashboard():
 def admin_atualizar_imagem():
     chave = request.form.get("chave")
     url_remota = request.form.get("url_remota", "").strip()
-    arquivo = request.files.get("arquivo_imagem")
+    # Aceita tanto 'arquivo_imagem' como 'arquivo'
+    arquivo = request.files.get("arquivo_imagem") or request.files.get("arquivo")
 
     url_final = None
 
@@ -360,12 +361,16 @@ def admin_atualizar_imagem():
         if allowed_img_file(arquivo.filename):
             ext = arquivo.filename.rsplit(".", 1)[1].lower()
             nome_arquivo = secure_filename(f"{chave}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}")
+            
+            # Garante que a pasta de upload existe no servidor
+            os.makedirs(app.config["UPLOAD_FOLDER_IMG"], exist_ok=True)
+            
             caminho_salvar = os.path.join(app.config["UPLOAD_FOLDER_IMG"], nome_arquivo)
             arquivo.save(caminho_salvar)
             url_final = f"/static/uploads/{nome_arquivo}"
         else:
             flash("Formato de imagem inválido. Use PNG, JPG, JPEG, WEBP ou SVG.", "erro")
-            return redirect(url_for("admin_dashboard"))
+            return redirect(request.referrer or url_for("admin_dashboard"))
     elif url_remota:
         url_final = url_remota
 
@@ -378,8 +383,9 @@ def admin_atualizar_imagem():
     else:
         flash("Nenhuma imagem enviada ou URL especificada.", "erro")
 
-    return redirect(url_for("admin_dashboard"))
-
+    # Redireciona de volta para a própria página de imagens
+    return redirect(request.referrer or url_for("admin_dashboard"))
+    
 @app.route("/admin/atualizar-metricas", methods=["POST"])
 @login_required
 def admin_atualizar_metricas():
