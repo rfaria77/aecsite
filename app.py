@@ -345,15 +345,6 @@ def admin_dashboard():
         txt=txt_dict
     )
 
-@app.route("/admin/atualizar-imagem", methods=["POST"])
-@app.route("/admin/imagens", methods=["POST"])
-@login_required
-def admin_atualizar_imagem():
-    chave = request.form.get("chave")
-    url_remota = request.form.get("url_remota", "").strip()
-    arquivo = request.files.get("arquivo_imagem")
-
-    url_final = None
     
 @app.route("/admin/atualizar-imagem", methods=["POST"])
 @login_required
