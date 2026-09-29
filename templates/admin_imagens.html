@@ -78,7 +78,7 @@
           <img src="{{ url }}" alt="{{ titulo }}" class="w-full h-full object-cover rounded-lg">
         </div>
 
-        <form action="/admin/imagens" method="POST" enctype="multipart/form-data" class="space-y-3 pt-2 border-t border-slate-100">
+        <form action="/admin/atualizar-imagem" method="POST" enctype="multipart/form-data" class="space-y-3 pt-2 border-t border-slate-100">
           <input type="hidden" name="chave" value="{{ chave }}">
           <input type="file" name="arquivo" accept="image/*" required class="block w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer">
           <button type="submit" class="w-full py-2 bg-slate-900 hover:bg-[#0077D4] text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5">
