@@ -436,7 +436,7 @@
     </div>
   </section>
 
-  <!-- ================= MÓDULO SIMULADOR ESOCIAL ================= -->
+<!-- ================= MÓDULO SIMULADOR ESOCIAL ================= -->
   <section id="simulador" class="py-10 bg-gradient-to-r from-brand-navy via-[#0C2F52] to-brand-navy text-white">
     <div class="max-w-7xl mx-auto px-5">
       <div class="grid lg:grid-cols-12 gap-8 items-center">
@@ -455,19 +455,34 @@
             <div class="text-xs font-bold text-white">Verifique a situação da sua empresa:</div>
             <div class="space-y-2 text-xs">
               <label class="flex items-center gap-2.5 p-2.5 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors">
-                <input type="checkbox" class="w-3.5 h-3.5 text-brand-royal rounded focus:ring-0">
+                <input type="checkbox" id="check-s2240" class="checklist-item w-3.5 h-3.5 text-brand-royal rounded focus:ring-0" checked>
                 <span>Minha empresa já envia o evento S-2240 (Condições Ambientais)</span>
               </label>
               <label class="flex items-center gap-2.5 p-2.5 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors">
-                <input type="checkbox" class="w-3.5 h-3.5 text-brand-royal rounded focus:ring-0">
+                <input type="checkbox" id="check-pgr" class="checklist-item w-3.5 h-3.5 text-brand-royal rounded focus:ring-0" checked>
                 <span>O PGR e PCMSO foram renovados nos últimos 12 meses</span>
               </label>
               <label class="flex items-center gap-2.5 p-2.5 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors">
-                <input type="checkbox" class="w-3.5 h-3.5 text-brand-royal rounded focus:ring-0">
+                <input type="checkbox" id="check-aso" class="checklist-item w-3.5 h-3.5 text-brand-royal rounded focus:ring-0" checked>
                 <span>Todos os colaboradores possuem ASO periódico dentro da validade</span>
               </label>
             </div>
-            <!-- Conversão direta WhatsApp -->
+
+            <!-- Caixa de Validação Dinâmica -->
+            <div id="resultado-checklist" class="p-3 rounded-xl text-xs font-medium border transition-all"></div>
+
+            <!-- Conversão direta WhatsApp com Diagnóstico -->
+            <button type="button" id="btn-validar-whatsapp" class="w-full py-2.5 text-xs font-bold uppercase tracking-wider text-brand-navy bg-brand-sky hover:bg-sky-300 rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+              Validar Situação pelo WhatsApp
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Conversão direta WhatsApp -->
             <a href="https://wa.me/{{ whatsapp_num | default('5534920017086') }}?text=Ol%C3%A1!%20Fiz%20o%20checklist%20do%20eSocial%20no%20site%20e%20gostaria%20de%20uma%20avalia%C3%A7%C3%A3o%20t%C3%A9cnica%20da%20minha%20empresa." target="_blank" class="w-full py-2.5 text-xs font-bold uppercase tracking-wider text-brand-navy bg-brand-sky hover:bg-sky-300 rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md">
               <i data-lucide="message-circle" class="w-4 h-4"></i>
               Validar Situação pelo WhatsApp
@@ -915,6 +930,49 @@
         e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
       });
     });
+
+    // Validação interativa do Checklist do eSocial
+    const checkboxes = document.querySelectorAll(".checklist-item");
+    const resultadoBox = document.getElementById("resultado-checklist");
+    const btnValidar = document.getElementById("btn-validar-whatsapp");
+
+    function atualizarDiagnostico() {
+      if (!resultadoBox) return;
+
+      const total = checkboxes.length;
+      let marcados = 0;
+      checkboxes.forEach(chk => { if (chk.checked) marcados++; });
+
+      resultadoBox.className = "p-3 rounded-xl text-xs font-semibold border transition-all";
+
+      if (marcados === total) {
+        resultadoBox.classList.add("bg-emerald-500/20", "border-emerald-400/40", "text-emerald-200");
+        resultadoBox.innerHTML = "✅ <strong>Em conformidade aparente:</strong> Todos os itens essenciais foram marcados. Recomendamos auditoria preventiva anual.";
+      } else if (marcados >= 1) {
+        resultadoBox.classList.add("bg-amber-500/20", "border-amber-400/40", "text-amber-200");
+        resultadoBox.innerHTML = "⚠️ <strong>Atenção às pendências:</strong> Há obrigações em aberto sujeitas a autuações e notificações automáticas.";
+      } else {
+        resultadoBox.classList.add("bg-rose-500/20", "border-rose-400/40", "text-rose-200");
+        resultadoBox.innerHTML = "🚨 <strong>Alto Risco:</strong> Sem envio ou renovação de laudos, a empresa fica sujeita a multas diretas da Receita Federal e MTE.";
+      }
+    }
+
+    checkboxes.forEach(chk => chk.addEventListener("change", atualizarDiagnostico));
+    atualizarDiagnostico();
+
+    if (btnValidar) {
+      btnValidar.addEventListener("click", function () {
+        const s2240 = document.getElementById("check-s2240")?.checked ? "Sim" : "Não";
+        const pgr = document.getElementById("check-pgr")?.checked ? "Sim" : "Não";
+        const aso = document.getElementById("check-aso")?.checked ? "Sim" : "Não";
+
+        const texto = `Olá! Realizei o Checklist de eSocial no site da A&C SST:%0A- S-2240 enviado: ${s2240}%0A- PGR/PCMSO nos últimos 12 meses: ${pgr}%0A- ASO periódico válido: ${aso}%0A%0AGostaria de uma orientação para regularizar a minha empresa.`;
+        
+        const whatsNum = "{{ whatsapp_num | default('5534920017086') }}";
+        window.open(`https://wa.me/${whatsNum}?text=${texto}`, "_blank");
+      });
+    }
+    
   </script>
 </body>
 </html>
